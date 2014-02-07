@@ -16,6 +16,7 @@
  */
 package se.openflisp.sls;
 
+import se.openflisp.sls.exception.ComponentEvaluationException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,5 +135,5 @@ public abstract class Component {
 	/**
 	 * Evaluates the components inputs and produces changes on its outputs.
 	 */
-	public abstract void evaluate();
+	public abstract void evaluate() throws ComponentEvaluationException;
 }

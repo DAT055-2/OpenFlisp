@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package se.openflisp.sls;
+import se.openflisp.sls.exception.ComponentEvaluationException;
 
 /**
  * Class representing a logical gate in a Sequential Logical Circuit.
@@ -60,5 +61,5 @@ public abstract class Gate extends Component {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public abstract void evaluate();
+	public abstract void evaluate() throws ComponentEvaluationException;
 }
