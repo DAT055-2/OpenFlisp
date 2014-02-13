@@ -20,6 +20,7 @@ import se.openflisp.sls.Component;
 import se.openflisp.sls.Output;
 import se.openflisp.sls.Signal;
 import se.openflisp.sls.exception.ComponentEvaluationException;
+import se.openflisp.sls.event.ComponentEventDelegator;
 
 /**
  * Class representing a logical gate in a Sequential Logical Circuit.
@@ -42,6 +43,13 @@ public abstract class Gate extends Component {
 	 */
 	public Gate(String identifier) {
 		super(identifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Gate(String identifier, ComponentEventDelegator delegator) {
+		super(identifier, delegator);
 	}
 	
 	/**

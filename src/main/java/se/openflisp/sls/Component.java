@@ -68,6 +68,13 @@ public abstract class Component {
 	 * @param delegator		the component event delegator
 	 */
 	public Component(String identifier, ComponentEventDelegator delegator) {
+		if (identifier == null || identifier.isEmpty()) {
+			throw new IllegalArgumentException("Identifier can not be null or empty.");
+		}
+		if (delegator == null) {
+			throw new IllegalArgumentException("Delegator can not be null.");
+		}
+
 		this.identifier 	= identifier;
 		this.eventDelegator = delegator;
 	}
