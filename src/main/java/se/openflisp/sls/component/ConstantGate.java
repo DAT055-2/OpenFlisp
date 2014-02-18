@@ -41,6 +41,9 @@ public class ConstantGate extends Gate {
 	 */
 	public ConstantGate(String identifier, Signal.State state) {
 		super(identifier);
+		if (state == null) {
+			throw new IllegalArgumentException("State can not be null.");
+		}
 		this.state = state;
 	}
 	
@@ -51,6 +54,9 @@ public class ConstantGate extends Gate {
 	 */
 	public ConstantGate(String identifier, Signal.State state, ComponentEventDelegator delegator) {
 		super(identifier, delegator);
+		if (state == null) {
+			throw new IllegalArgumentException("State can not be null.");
+		}
 		this.state = state;
 	}
 

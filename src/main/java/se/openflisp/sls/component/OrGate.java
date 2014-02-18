@@ -21,24 +21,24 @@ import se.openflisp.sls.event.ComponentEventDelegator;
 import java.util.Collection;
 
 /**
- * A NotGate Component.
+ * An OrGate Component.
  * 
  * @author Hannes Elvemyr <hannes88@gmail.com>
  * @version 1.0
  */
-public class NotGate extends Gate {
-	
+public class OrGate extends Gate {
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public NotGate(String identifier) {
+	public OrGate(String identifier) {
 		super(identifier);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public NotGate(String identifier, ComponentEventDelegator delegator) {
+	public OrGate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);
 	}
 
@@ -47,19 +47,23 @@ public class NotGate extends Gate {
 	 */
 	public Signal.State evaluateOutput() {
 		Collection<Input> inputCollection = getInputs();
-		if(inputCollection.size() > 1) {
+		boolean floatingPresent = false;
+
+		if(inputCollection.size() == 0) {
 			return Signal.State.FLOATING;
 		}
-
 		for(Input i : inputCollection) {
 			Signal.State currentState = i.getState();
-			if(currentState == Signal.State.LOW) {
+			if(currentState == Signal.State.HIGH) {
 				return Signal.State.HIGH;
-			} else if(currentState == Signal.State.HIGH) {
-				return Signal.State.LOW;
+			} else  if(currentState == Signal.State.FLOATING) {
+				floatingPresent = true;
 			}
 		}
-		return Signal.State.FLOATING;
+		if(floatingPresent) {
+			return Signal.State.FLOATING;
+		} else {
+			return Signal.State.LOW;
+		}
 	}
-
 }

@@ -16,13 +16,22 @@
  */
 package se.openflisp.sls.component;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import se.openflisp.sls.ComponentTest;
+import se.openflisp.sls.Component;
+import se.openflisp.sls.Input;
 import se.openflisp.sls.Output;
+import se.openflisp.sls.Signal;
 import se.openflisp.sls.event.ComponentEventDelegator;
+import org.mockito.Mockito;
 
 public abstract class GateTest extends ComponentTest {
 
@@ -46,4 +55,38 @@ public abstract class GateTest extends ComponentTest {
 
 	@Override
 	protected abstract Gate getInstance(String identifier, ComponentEventDelegator delegator);
+
+	public void helpEvaluatingOutput(Signal.State[] states, Signal.State expectedState, Gate gateToHelp) {
+		Map<Input, Signal.State> inputMocks = new HashMap<Input, Signal.State>();
+		for(Signal.State state : states) {
+			inputMocks.put(Mockito.mock(Input.class), state);
+		}
+		Gate gateWithNewInputs = addInputMockToInputs(inputMocks, gateToHelp);
+		assertThat(gateWithNewInputs.getInputs().size(), is(states.length));
+		assertEquals(expectedState, gateWithNewInputs.evaluateOutput());
+	}
+
+	public Gate addInputMockToInputs(Map<Input, Signal.State> inputMocks, Gate gateToHelp) {
+		Map<String, Input> newMap = new HashMap<String, Input>();
+
+		int	i = 0; 
+		for(Map.Entry<Input, Signal.State> entry : inputMocks.entrySet()) {
+			Input tempMock = entry.getKey();
+			Mockito.when(tempMock.getState()).thenReturn(entry.getValue());
+			newMap.put("identifier " + i, tempMock);
+			i++;
+		}
+
+		try {
+			Field field = Component.class.getDeclaredField("inputs");
+			field.setAccessible(true);
+			field.set(gateToHelp, newMap);
+		} catch (NoSuchFieldException e) {
+			System.out.println(e.getMessage());
+		} catch (IllegalAccessException e) {
+			System.out.println(e.getMessage());
+		}
+		return gateToHelp;
+	}
+
 }

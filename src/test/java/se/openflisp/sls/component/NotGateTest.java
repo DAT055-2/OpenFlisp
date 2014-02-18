@@ -36,7 +36,6 @@ import org.mockito.Mockito;
 public class NotGateTest extends GateTest {
 
 	private Gate notGate;
-	private Gate notGateSpy;
 
 	@Override
 	protected Gate getInstance(String identifier) {
@@ -52,7 +51,6 @@ public class NotGateTest extends GateTest {
 	public void before() {
 		super.setup();
 		notGate = new NotGate(gateName);
-		notGateSpy = Mockito.spy(notGate);
 	}
 
 	@Test
@@ -79,7 +77,7 @@ public class NotGateTest extends GateTest {
 		Input inputMock2 = Mockito.mock(Input.class);
 		Mockito.when(inputMock2.getState()).thenReturn(Signal.State.LOW);
 		
-		Map hashMap = new HashMap<String, Input>();
+		Map<String, Input> hashMap = new HashMap<String, Input>();
 		hashMap.put(id,inputMock1);
 		hashMap.put("identifier2",inputMock2);
 		try {
@@ -93,6 +91,13 @@ public class NotGateTest extends GateTest {
 		}
 		assertThat(notGate.getInputs().size(), is(2));
 		assertEquals(Signal.State.FLOATING, notGate.evaluateOutput());
+	}
+
+	@Test
+	public void testWithNoInput() {
+		assertThat(notGate.getInputs().size(), is(0));
+		assertEquals(Signal.State.FLOATING, notGate.evaluateOutput());
+		assertThat(notGate.getInputs().size(), is(0));
 	}
 
 	@Test
@@ -113,7 +118,7 @@ public class NotGateTest extends GateTest {
 	public void addInputMock1ToInputs(Signal.State state) {
 		Mockito.when(inputMock1.getState()).thenReturn(state);
 
-		Map hashMap = new HashMap<String, Input>();
+		Map<String, Input> hashMap = new HashMap<String, Input>();
 		hashMap.put(id, inputMock1);
 		try {
 			Field field = Component.class.getDeclaredField("inputs");
