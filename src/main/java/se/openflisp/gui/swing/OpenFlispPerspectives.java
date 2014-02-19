@@ -19,11 +19,15 @@ package se.openflisp.gui.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.JComboBox;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.SplitDockStation;
@@ -85,9 +89,13 @@ public class OpenFlispPerspectives implements ItemListener {
         perspective.add(asmStation,ASMPERSPECTIVE);
                  
         //Populate the combobox
-        pane.add(comboBoxPane, BorderLayout.PAGE_START);
+        pane.add(comboBoxPane, BorderLayout.LINE_START);
         pane.add(perspective, BorderLayout.CENTER);
         
+        //make the new content in container visible
+        pane.revalidate();
+        pane.repaint();
+
 	}
 	
 	/**

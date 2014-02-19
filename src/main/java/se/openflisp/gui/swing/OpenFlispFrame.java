@@ -17,13 +17,23 @@
 package se.openflisp.gui.swing;
 
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
 import se.openflisp.gui.swing.OpenFlispPerspectives;
@@ -37,6 +47,7 @@ import se.openflisp.gui.swing.OpenFlispPerspectives;
 public class OpenFlispFrame extends JFrame {
 	
 	private OpenFlispPerspectives perspectives;
+	private JMenuItem menu_close, menu_item1, menu_item2, menu2;
 	
 	public OpenFlispFrame() {
 		
@@ -47,14 +58,18 @@ public class OpenFlispFrame extends JFrame {
 		this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 		this.setMinimumSize(new Dimension(640,480));
 		this.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
-
-		/* Set Layout */
-		OpenFlispPerspectives view = new OpenFlispPerspectives();
-		view.addComponentToPane(this.getContentPane());
+		this.setLayout(new BorderLayout());
 		
+		/* Set Layout */
+		
+		/* Add the menubar to this frame */
+		OpenFlispMenu menu = new OpenFlispMenu();
+		menu.addMenuToFrame(this);
+				
 		this.pack();
 		this.setVisible(true);
 	}
+	
 	
 	//Create a border to highlight active OpenFlispPerspective
 	Border outline = BorderFactory.createLineBorder(Color.black);
