@@ -20,8 +20,6 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import se.openflisp.sls.Signal;
-import se.openflisp.sls.component.Gate;
-import se.openflisp.sls.component.GateTest;
 import se.openflisp.sls.event.ComponentEventDelegator;
 import org.junit.Test;
 import org.junit.Before;

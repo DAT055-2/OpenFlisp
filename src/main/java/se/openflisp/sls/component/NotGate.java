@@ -45,6 +45,7 @@ public class NotGate extends Gate {
 	/**
 	 * {@inheritDoc}
 	 */
+        @Override
 	public Signal.State evaluateOutput() {
 		Collection<Input> inputCollection = getInputs();
 		if(inputCollection.size() > 1) {

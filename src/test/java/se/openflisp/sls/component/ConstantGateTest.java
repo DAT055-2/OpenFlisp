@@ -16,14 +16,11 @@
  */
 package se.openflisp.sls.component;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import se.openflisp.sls.Signal;
 import se.openflisp.sls.event.ComponentEventDelegator;
 

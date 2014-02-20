@@ -46,7 +46,7 @@ public abstract class EventDelegator<T> {
 	 * @return true if the listener was added, false otherwise
 	 */
 	public boolean addListener(T listener) {
-		return this.addListener(listener, ListenerContext.DEFAULT);
+		return this.addListener(ListenerContext.DEFAULT, listener);
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public abstract class EventDelegator<T> {
 	 * @param context	
 	 * @return true if the listener was added, false otherwise
 	 */
-	public boolean addListener(T listener, ListenerContext context) {
+	public boolean addListener(ListenerContext context, T listener) {
 		if (!this.listeners.containsKey(context)) {
 			this.listeners.put(context, new LinkedList<T>());
 		}

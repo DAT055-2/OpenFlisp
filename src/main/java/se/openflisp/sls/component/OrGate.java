@@ -45,6 +45,7 @@ public class OrGate extends Gate {
 	/**
 	 * {@inheritDoc}
 	 */
+        @Override
 	public Signal.State evaluateOutput() {
 		Collection<Input> inputCollection = getInputs();
 		boolean floatingPresent = false;

@@ -18,7 +18,6 @@ package se.openflisp.sls.component;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -26,8 +25,6 @@ import java.util.Map;
 import se.openflisp.sls.Input;
 import se.openflisp.sls.Signal;
 import se.openflisp.sls.Component;
-import se.openflisp.sls.component.Gate;
-import se.openflisp.sls.component.GateTest;
 import se.openflisp.sls.event.ComponentEventDelegator;
 import org.junit.Test;
 import org.junit.Before;

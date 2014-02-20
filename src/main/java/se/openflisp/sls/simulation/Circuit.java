@@ -65,8 +65,8 @@ public class Circuit {
 			throw new IllegalArgumentException("Component can not be null");
 		}
 		if (this.components.add(component)) {
-			component.getEventDelegator().addListener(this.connectionHandler, ListenerContext.MODEL);
-			component.getEventDelegator().addListener(this.simulationThread.signalHandler, ListenerContext.MODEL);
+			component.getEventDelegator().addListener(ListenerContext.MODEL, this.connectionHandler);
+			component.getEventDelegator().addListener(ListenerContext.MODEL, this.simulationThread.signalHandler);
 			for (Input input : component.getInputs()) {
 				if (input.isConnected()) {
 					this.addComponent(input.getConnection().getOwner());
