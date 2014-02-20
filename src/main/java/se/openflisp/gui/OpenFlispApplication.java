@@ -16,6 +16,8 @@
  */
 package se.openflisp.gui;
 
+import javax.swing.SwingUtilities;
+
 import se.openflisp.gui.swing.OpenFlispFrame;
 
 /**	
@@ -25,31 +27,48 @@ import se.openflisp.gui.swing.OpenFlispFrame;
  * @version 1.0
  */
 public class OpenFlispApplication {
-	/* Application frame and settings */
+	
+	/**
+	 * The main OpenFlispFrame
+	 */
 	private OpenFlispFrame frame;
 	
-	
+	/**
+	 * Instantiate the OpenFlispFrame, 
+	 * make it visible and center it on screen
+	 */
 	public OpenFlispApplication() {
-		this.frame = null;	
-	}
-	
-	public void initialize() {
-		
-		/* Create and show main frame */
 		this.frame = new OpenFlispFrame();
 		this.frame.setVisible(true);
 		this.frame.setLocationRelativeTo(null);
+	}
+	
+	/**
+	 * Initiate the frame, add a frame icon and load settings
+	 */
+	public void initialize() {
 		
-		/* Add frame icon */
-		// TODO	Frame icon
+		// Add frame icon
+		// TODO	Add frame icon
 				
-		/* Load settings */
-		// TODO Settings
+		// Load settings
+		// TODO Load settings
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public static void main(String[] args) {
-		OpenFlispApplication application = new OpenFlispApplication();
-		application.initialize();
+		
+		// Make swing thread
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				OpenFlispApplication application = new OpenFlispApplication();
+				application.initialize();
+			}
+		});
 	}
 
 }

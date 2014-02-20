@@ -19,32 +19,47 @@ package se.openflisp.gui.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
-import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComboBox;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.station.split.SplitDockGrid;
+import se.openflisp.gui.perspectives.AsmPerspective;
+import se.openflisp.gui.perspectives.Perspective;
+import se.openflisp.gui.perspectives.SlsPerspective;
 
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
+	
 /**	
  * Create OpenFlisp Perspectives
  * 
  * @author Daniel Svensson <daniel@dsit.se>
  * @version 1.0
  */
-public class OpenFlispPerspectives implements ItemListener {
-	// Define perspectives 
-	JPanel perspective;
-	final static String SLSPERSPECTIVE = "Syncronous logic simulation";
-    final static String ASMPERSPECTIVE = "DigiFLISP Simulation";
+@SuppressWarnings("serial")
+public class OpenFlispPerspectives extends JPanel implements ItemListener {
 	
+	// Define perspectives 
+	List<Perspective> perspectives;
+	
+	/**
+	 * Set layout and initiate all perspectives
+	 */
+    public OpenFlispPerspectives() {
+    	//Set to cardlayout in order to change layout
+    	this.setLayout(new CardLayout());
+    	
+    	//Initialize list
+    	perspectives = new ArrayList<Perspective>();
+    	
+    	//Initialize all the perspectives
+    	perspectives.add(new SlsPerspective(new EclipseTheme()));
+    	perspectives.add(new AsmPerspective(new EclipseTheme()));
+    }
+    
     /**
 	 * Gets a contentpane on which a combobox and the choosen perspective
 	 * is added.
@@ -52,58 +67,46 @@ public class OpenFlispPerspectives implements ItemListener {
 	 * @param a content pane
 	 */
 	public void addComponentToPane(Container pane) {
-		//Put the JComboBox in a JPanel to get a nicer look.
-        JPanel comboBoxPane = new JPanel(); //use FlowLayout
-        String comboBoxItems[] = { SLSPERSPECTIVE, ASMPERSPECTIVE };
+		//We create a JPanel for our JCombobox
+		JPanel comboBoxPane = new JPanel(); //use FlowLayout
+		
+		//Create combobox items
+		List<String> comboBoxItems = new ArrayList<String>();
+		for (Perspective perspective : perspectives) {
+			comboBoxItems.add(perspective.getIdentifier());
+		}
         
         //Create combobox for perspectives
-        JComboBox cb = new JComboBox(comboBoxItems);
-        cb.setEditable(false);
-        cb.addItemListener(this);
-        comboBoxPane.add(cb);
-         
-        // Create slsPerspective
-        DockController slsController = new DockController();
-        SplitDockStation slsStation = new SplitDockStation();
-        slsController.add(slsStation);
+        JComboBox comboBox = new JComboBox(comboBoxItems.toArray());
         
-        SplitDockGrid slsGrid = new SplitDockGrid();
-        slsGrid.addDockable(0, 0, 2, 1, new DefaultDockable("Komponenter"));
-        slsGrid.addDockable(0, 1, 1 ,1, new DefaultDockable("Kopplingsarea"));
-        slsStation.dropTree( slsGrid.toTree());
+        //Disable editing of combobox
+        comboBox.setEditable(false);
         
-        // Create asmPerspective
-        DockController asmController = new DockController();
-        SplitDockStation asmStation = new SplitDockStation();
-        asmController.add(asmStation);
+        //Add item listener so we can change layout
+        comboBox.addItemListener(this);
         
-        SplitDockGrid asmGrid = new SplitDockGrid();
-        asmGrid.addDockable(0, 0, 2, 1, new DefaultDockable("Editor"));
-        asmGrid.addDockable(0, 1, 1 ,1, new DefaultDockable("Simulator"));
-        asmStation.dropTree( asmGrid.toTree());
-        //TODO DRY 
+        //Add the combobox to our JPanel
+        comboBoxPane.add(comboBox);
         
-        //Create the panel that contains the "cards".
-        perspective = new JPanel(new CardLayout());
-        perspective.add(slsStation,SLSPERSPECTIVE);
-        perspective.add(asmStation,ASMPERSPECTIVE);
+        //Add all perspectives to our cardlayout
+        for (Perspective perspective : perspectives) {
+        	add(perspective.getStation(), perspective.getIdentifier());
+        }
                  
         //Populate the combobox
-        pane.add(comboBoxPane, BorderLayout.LINE_START);
-        pane.add(perspective, BorderLayout.CENTER);
-        
-        //make the new content in container visible
-        pane.revalidate();
-        pane.repaint();
-
+        pane.add(comboBoxPane, BorderLayout.PAGE_START);
+        pane.add(this, BorderLayout.CENTER);   
 	}
 	
 	/**
-	 * Listener for changes in the combobox, if a change does occur
-	 * the cardlayout switches to another perspective.
+	 * Listener for changes in the combo box, if a change does occur
+	 * the card layout switches to another perspective.
 	 */
 	public void itemStateChanged(ItemEvent evt) {
-	        CardLayout cl = (CardLayout)(perspective.getLayout());
-	        cl.show(perspective, (String)evt.getItem());
+			//Get this layout
+	        CardLayout cl = (CardLayout)(this.getLayout());
+	        
+	        //Change to the choosen layout
+	        cl.show(this, (String)evt.getItem());
 	}
 }
