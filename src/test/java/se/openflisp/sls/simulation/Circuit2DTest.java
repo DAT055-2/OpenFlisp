@@ -89,4 +89,20 @@ public class Circuit2DTest extends CircuitTest {
 		circuit2D.setComponentLocation(component1, point2);
 		verify(delegator).onComponentMoved(component1, point1, point2);
 	}
+	
+	@Test
+	public void testRemovesPositionOnRemove() {
+		circuit2D.addComponent(component1, point1);
+		circuit2D.removeComponent(component1);
+		assertNull(circuit2D.getComponentLocation(component1));
+	}
+	
+	@Test
+	public void testRemovePositionDoesntRemoveAll() {
+		circuit2D.addComponent(component1, point1);
+		circuit2D.addComponent(component2, point2);
+		circuit2D.removeComponent(component1);
+		assertNull(circuit2D.getComponentLocation(component1));
+		assertSame(circuit2D.getComponentLocation(component2), point2);
+	}
 }

@@ -24,10 +24,11 @@ import se.openflisp.sls.Component;
 import se.openflisp.sls.event.CircuitEventDelegator;
 
 /**
- * A logical circuit of Components that can be placed in a 2D-grid.
+ * An extension of a logical Circuit which maps Components to certain positions in a 2D-grid.
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0
+ * @see Circuit2DBuilder
  */
 public class Circuit2D extends Circuit {
 
@@ -73,6 +74,15 @@ public class Circuit2D extends Circuit {
 			super.addComponent(component);
 			this.setComponentLocation(component, location);
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeComponent(Component component) {
+		super.removeComponent(component);
+		this.locations.remove(component);
 	}
 	
 	/**

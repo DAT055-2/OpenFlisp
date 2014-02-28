@@ -31,10 +31,15 @@ import se.openflisp.sls.event.ComponentListener;
 import se.openflisp.sls.event.ListenerContext;
 
 /**
- * A logical circuit of Components.
+ * Circuit, a container of logical Components.
+ * 
+ * Used as a grouping class to keep track of and simulate a set of gates. The Circuit will listen
+ * to individual Component's changes and therefore keep a correct list of all gates within it self.
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0
+ * @see Circuit2D
+ * @see CircuitSimulation
  */
 public class Circuit {
 
