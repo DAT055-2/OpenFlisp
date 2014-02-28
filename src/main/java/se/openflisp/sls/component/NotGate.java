@@ -18,7 +18,7 @@ package se.openflisp.sls.component;
 
 import se.openflisp.sls.*;
 import se.openflisp.sls.event.ComponentEventDelegator;
-import java.util.Collection;
+import se.openflisp.sls.util.SignalCollection;
 
 /**
  * Class representing a logical NOT-gate.
@@ -52,17 +52,14 @@ public class NotGate extends Gate {
 	 */
 	@Override
 	public Signal.State evaluateOutput() {
-		Collection<Input> inputCollection = getInputs();
-		if(inputCollection.size() > 1) {
+		if (this.getInputs().size() > 1) {
 			return Signal.State.FLOATING;
 		}
-		for(Input i : inputCollection) {
-			Signal.State currentState = i.getState();
-			if(currentState == Signal.State.LOW) {
-				return Signal.State.HIGH;
-			} else if(currentState == Signal.State.HIGH) {
-				return Signal.State.LOW;
-			}
+		if (SignalCollection.containsState(this.getInputs(), Signal.State.LOW)) {
+			return Signal.State.HIGH;
+		}
+		if (SignalCollection.containsState(this.getInputs(), Signal.State.HIGH)) {
+			return Signal.State.LOW;
 		}
 		return Signal.State.FLOATING;
 	}

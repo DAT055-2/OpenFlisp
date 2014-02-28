@@ -18,7 +18,7 @@ package se.openflisp.sls.component;
 
 import se.openflisp.sls.*;
 import se.openflisp.sls.event.ComponentEventDelegator;
-import java.util.Collection;
+import se.openflisp.sls.util.SignalCollection;
 
 /**
  * Class representing a logical OR-gate.
@@ -52,24 +52,15 @@ public class OrGate extends Gate {
 	 */
 	@Override
 	public Signal.State evaluateOutput() {
-		Collection<Input> inputCollection = getInputs();
-		boolean floatingPresent = false;
-
-		if(inputCollection.size() < 2) {
+		if (this.getInputs().size() < 2) {
 			return Signal.State.FLOATING;
 		}
-		for(Input i : inputCollection) {
-			Signal.State currentState = i.getState();
-			if(currentState == Signal.State.HIGH) {
-				return Signal.State.HIGH;
-			} else  if(currentState == Signal.State.FLOATING) {
-				floatingPresent = true;
-			}
+		if (SignalCollection.containsState(this.getInputs(), Signal.State.HIGH)) {
+			return Signal.State.HIGH;
 		}
-		if(floatingPresent) {
+		if (SignalCollection.containsState(this.getInputs(), Signal.State.FLOATING)) {
 			return Signal.State.FLOATING;
-		} else {
-			return Signal.State.LOW;
 		}
+		return Signal.State.LOW;
 	}
 }
