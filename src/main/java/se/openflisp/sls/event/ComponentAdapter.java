@@ -26,6 +26,7 @@ import se.openflisp.sls.Signal;
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0
+ * @see ComponentEventDelegator
  */
 public abstract class ComponentAdapter implements ComponentListener {
 

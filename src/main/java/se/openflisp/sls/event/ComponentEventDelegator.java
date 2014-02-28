@@ -24,7 +24,11 @@ import se.openflisp.sls.Output;
 import se.openflisp.sls.Signal;
 
 /**
- * Delegates events from Components to passive listeners.
+ * Delegator for component events in the simulation.
+ * 
+ * Prioritizes {@link ListenerContext#MODEL} listeners before {@link ListenerContext#SWING} 
+ * and {@link ListenerContext#DEFAULT} listeners. Will run the {@link ListenerContext#SWING} in 
+ * the Swing event thread.
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0

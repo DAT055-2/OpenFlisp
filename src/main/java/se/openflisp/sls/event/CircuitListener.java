@@ -26,6 +26,7 @@ import se.openflisp.sls.Component;
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0
+ * @see CircuitEventDelegator
  */
 public interface CircuitListener {
 

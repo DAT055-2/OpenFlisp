@@ -23,10 +23,16 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Base class for a event delegator.
+ * Delegator for events in the simulation.
+ * 
+ * Handles the group of listeners that should be notified when a specific event happens. Extending classes
+ * is responsible for calling the listeners that have been added. The extending class should also pay respect
+ * to the ListenerContext of the listener to decide priority and if the listener needs to be run in another thread.
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0
+ * @see CircuitEventDelegator
+ * @see ComponentEventDelegator
  * 
  * @param <T>	the listener interface that the delegator should handle
  */
@@ -42,7 +48,7 @@ public abstract class EventDelegator<T> {
 	 * 
 	 * Will use {@link ListenerContext#DEFAULT} context as default.
 	 * 
-	 * @param listener	listener that should be notified when a event happens
+	 * @param listener		listener that should be notified when a event happens
 	 * @return true if the listener was added, false otherwise
 	 */
 	public boolean addListener(T listener) {
@@ -53,15 +59,14 @@ public abstract class EventDelegator<T> {
 	}
 	
 	/**
+	 * Adds a listener that should be notified when a event happens.
 	 * 
-	 * @param listener	listener that should be notified when a event happens
-	 * @param context	
+	 * @param context		in which context the listener should be called in
+	 * @param listener		listener that should be notified when a event happens	
 	 * @return true if the listener was added, false otherwise
 	 */
 	public boolean addListener(ListenerContext context, T listener) {
-		if (listener == null) {
-			return false;
-		} else if (context == null) {
+		if (listener == null || context == null) {
 			return false;
 		}
 		if (!this.listeners.containsKey(context)) {
@@ -104,7 +109,7 @@ public abstract class EventDelegator<T> {
 	/**
 	 * Gets all listeners that has the specified context.
 	 * 
-	 * @param context	which context the listeners should have
+	 * @param context		which context the listeners should have
 	 * @return unmodifiable list of listeners with the specified context
 	 */
 	public Set<T> getListeners(ListenerContext context) {

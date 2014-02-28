@@ -22,6 +22,7 @@ package se.openflisp.sls.event;
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0
+ * @see EventDelegator
  */
 public enum ListenerContext {
 	/**

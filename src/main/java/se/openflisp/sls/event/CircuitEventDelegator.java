@@ -23,7 +23,11 @@ import javax.swing.SwingUtilities;
 import se.openflisp.sls.Component;
 
 /**
- * Delegates event from a Circuit to its listeners.
+ * Delegator for circuit events in the simulation.
+ * 
+ * Prioritizes {@link ListenerContext#MODEL} listeners before {@link ListenerContext#SWING} 
+ * and {@link ListenerContext#DEFAULT} listeners. Will run the {@link ListenerContext#SWING} in 
+ * the Swing event thread.
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0
