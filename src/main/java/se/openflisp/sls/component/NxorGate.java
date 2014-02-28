@@ -29,20 +29,19 @@ import se.openflisp.sls.util.SignalCollection;
 public class NxorGate extends Gate {
 	
 	/**
-	 * Creates a NxorGate
+	 * Creates a logical NXOR-gate.
      * 
-     * @param identifier identifier for the Gate
-     * @param delegator delegator for the Gate
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
 	 */
 	public NxorGate(String identifier) {
 		super(identifier);
 	}
 	
 	/**
-	 * Creates a NxorGate
+	 * Creates a logical NXOR-gate.
      * 
-     * @param identifier identifier for the Gate
-     * @param delegator delegator for the Gate
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public NxorGate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);

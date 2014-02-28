@@ -29,19 +29,19 @@ import se.openflisp.sls.util.SignalCollection;
 public class XorGate extends Gate {
 	
 	/**
-	 * Creates a XorGate
+	 * Creates a logical XOR-gate.
      * 
-     * @param identifier identifier for the Gate
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
 	 */
 	public XorGate(String identifier) {
 		super(identifier);
 	}
 	
 	/**
-	 * Creates a XorGate
+	 * Creates a logical XOR-gate.
      * 
-     * @param identifier identifier for the Gate
-     * @param delegator delegator for the Gate
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public XorGate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);

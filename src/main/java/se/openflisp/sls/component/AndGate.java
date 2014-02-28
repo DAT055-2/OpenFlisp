@@ -26,23 +26,22 @@ import se.openflisp.sls.util.SignalCollection;
  * @author Pär Svedberg <rockkuf@gmail.com>
  * @version 1.0
  */
-
 public class AndGate extends Gate {
 
 	/**
-	 * Creates an AndGate
-         * 
-         * @param identifier Identifier for the Gate
+	 * Creates a logical AND-gate.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
 	 */
 	public AndGate(String identifier) {
 		super(identifier);
 	}
 	
 	/**
-	 * Creates an AndGate
-         * 
-         * @param identifier Identifier for the Gate
-         * @param delegator Delegator to the Gate
+	 * Creates a logical AND-gate.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public AndGate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);
@@ -64,5 +63,4 @@ public class AndGate extends Gate {
 		}
 		return Signal.State.HIGH;
 	}
-
 }

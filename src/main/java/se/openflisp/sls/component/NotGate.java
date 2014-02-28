@@ -21,7 +21,7 @@ import se.openflisp.sls.event.ComponentEventDelegator;
 import java.util.Collection;
 
 /**
- * A NotGate Component.
+ * Class representing a logical NOT-gate.
  * 
  * @author Hannes Elvemyr <hannes88@gmail.com>
  * @version 1.0
@@ -29,19 +29,19 @@ import java.util.Collection;
 public class NotGate extends Gate {
 	
 	/**
-	 * Creates a NotGate
-         * 
-         * @param identifier identifier for the Gate
+	 * Creates a logical NOT-gate.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
 	 */
 	public NotGate(String identifier) {
 		super(identifier);
 	}
 
 	/**
-	 * Creates a NotGate
-         * 
-         * @param identifier  identifier for the Gate
-         * @param delegator delegator for the Gate
+	 * Creates a logical NOT-gate.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public NotGate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);
@@ -50,13 +50,12 @@ public class NotGate extends Gate {
 	/**
 	 * {@inheritDoc}
 	 */
-        @Override
+	@Override
 	public Signal.State evaluateOutput() {
 		Collection<Input> inputCollection = getInputs();
 		if(inputCollection.size() > 1) {
 			return Signal.State.FLOATING;
 		}
-
 		for(Input i : inputCollection) {
 			Signal.State currentState = i.getState();
 			if(currentState == Signal.State.LOW) {
@@ -67,5 +66,4 @@ public class NotGate extends Gate {
 		}
 		return Signal.State.FLOATING;
 	}
-
 }

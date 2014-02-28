@@ -21,7 +21,7 @@ import se.openflisp.sls.event.ComponentEventDelegator;
 import java.util.Collection;
 
 /**
- * An OrGate Component.
+ * Class representing a logical OR-gate.
  * 
  * @author Hannes Elvemyr <hannes88@gmail.com>
  * @version 1.0
@@ -29,19 +29,19 @@ import java.util.Collection;
 public class OrGate extends Gate {
 
 	/**
-	 * Creates an OrGate
-         * 
-         * @param identifier identifier for the Gate
+	 * Creates a logical OR-gate.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
 	 */
 	public OrGate(String identifier) {
 		super(identifier);
 	}
 
-        /**
-	 * Creates an OrGate
-         * 
-         * @param identifier identifier for the Gate
-         * @param delegator delegator for the Gate
+	/**
+	 * Creates a logical OR-gate.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public OrGate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);
@@ -50,7 +50,7 @@ public class OrGate extends Gate {
 	/**
 	 * {@inheritDoc}
 	 */
-        @Override
+	@Override
 	public Signal.State evaluateOutput() {
 		Collection<Input> inputCollection = getInputs();
 		boolean floatingPresent = false;

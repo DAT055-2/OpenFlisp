@@ -22,9 +22,10 @@ import se.openflisp.sls.Signal;
 import se.openflisp.sls.event.ComponentEventDelegator;
 
 /**
- * Class representing a logical gate in a Sequential Logical Circuit.
- * A gate can have many inputs and only one output.
- * Extends the class Component.
+ * A kind of Component that always have one and only one output. 
+ * 
+ * The state of this output should always be defined for the given inputs. If the gate 
+ * can't find a invariant state it should output {@link Signal.State#FLOATING}.
  * 
  * @author Pär Svedberg <rockkuf@gmail.com>
  * @author Anton Ekberg <anton.ekberg@gmail.com>
@@ -33,14 +34,14 @@ import se.openflisp.sls.event.ComponentEventDelegator;
 public abstract class Gate extends Component {
 
 	/**
-	 * The single output for a logical gate.
+	 * The single output identifier for a logical gate.
 	 */
 	public static final String OUTPUT = "Q";
 	
 	/**
-	 * Creates a Gate
-         * 
-         * @param identifier identifier for the Gate
+	 * Creates a logical Gate and initiates its only Output.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
 	 */
 	public Gate(String identifier) {
 		super(identifier);
@@ -48,10 +49,10 @@ public abstract class Gate extends Component {
 	}
 
 	/**
-	 * Creates a Gate
-         * 
-         * @param identifier identifier for the Gate
-         * @param delegator delegator for the Gate
+	 * Creates a logical Gate and initiates its only Output.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public Gate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);

@@ -21,7 +21,7 @@ import se.openflisp.sls.annotation.SourceComponent;
 import se.openflisp.sls.event.ComponentEventDelegator;
 
 /**
- * A Gate that will output a constant value.
+ * Class representing a logical gate that will output a constant state.
  * 
  * @author Anton Ekberg <anton.ekberg@gmail.com>
  * @version 1.0
@@ -35,10 +35,11 @@ public class ConstantGate extends Gate {
 	private final Signal.State state;
 	
 	/**
-	 * Creates a ConstantGate
-	 * 
-         * @param identifier identifier for the Gate
-	 * @param state state which the gate will constantly output
+	 * Creates a logical gate that will output a constant state.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param state			constant state that should be constantly outputed
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public ConstantGate(String identifier, Signal.State state) {
 		super(identifier);
@@ -49,11 +50,11 @@ public class ConstantGate extends Gate {
 	}
 	
 	/**
-	 * Creates a ConstantGate
-	 * 
-         * @param identifier identifier for the Gate
-	 * @param state	state which the gate will constantly output
-         * @param delegator delegator for the Gate
+	 * Creates a logical gate that will output a constant state.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param state			constant state that should be constantly outputed
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public ConstantGate(String identifier, Signal.State state, ComponentEventDelegator delegator) {
 		super(identifier, delegator);

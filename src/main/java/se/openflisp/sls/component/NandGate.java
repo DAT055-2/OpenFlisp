@@ -26,23 +26,22 @@ import se.openflisp.sls.util.SignalCollection;
  * @author Pär Svedberg <rockkuf@gmail.com>
  * @version 1.0
  */
-
 public class NandGate extends Gate {
 	
 	/**
-	 * Creates a NandGate
-         * 
-         * @param identifier identifier for the Gate
+	 * Creates a logical NAND-gate.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
 	 */
 	public NandGate(String identifier) {
 		super(identifier);
 	}
 	
 	/**
-	 * Creates a NandGate
-         * 
-         * @param identifier identifier for the Gate
-         * @param delegator delegator for the Gate
+	 * Creates a logical NAND-gate.
+     * 
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public NandGate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);

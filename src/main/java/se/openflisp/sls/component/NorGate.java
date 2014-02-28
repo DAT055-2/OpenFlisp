@@ -29,19 +29,19 @@ import se.openflisp.sls.util.SignalCollection;
 public class NorGate extends Gate {
 	
 	/**
-	 * Creates a NorGate
+	 * Creates a logical NOR-gate.
      * 
-     * @param identifier identifier for the Gate
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
 	 */
 	public NorGate(String identifier) {
 		super(identifier);
 	}
 	
 	/**
-	 * Creates a NorGate
+	 * Creates a logical NOR-gate.
      * 
-     * @param identifier identifier for the Gate
-     * @param delegator delegator for the Gate
+     * @param identifier	component identifier used for debugging and identifying within a Circuit
+     * @param delegator		the event delegator used for notifying listeners of events within a Component
 	 */
 	public NorGate(String identifier, ComponentEventDelegator delegator) {
 		super(identifier, delegator);
