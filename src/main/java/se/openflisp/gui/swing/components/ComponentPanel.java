@@ -27,12 +27,16 @@ import java.awt.dnd.DragGestureListener;
 
 import javax.swing.JPanel;
 
+import se.openflisp.sls.Component;
 import se.openflisp.sls.Signal;
 import se.openflisp.sls.component.AndGate;
 import se.openflisp.sls.component.ConstantGate;
 import se.openflisp.sls.component.NandGate;
+import se.openflisp.sls.component.NorGate;
 import se.openflisp.sls.component.NotGate;
+import se.openflisp.sls.component.NxorGate;
 import se.openflisp.sls.component.OrGate;
+import se.openflisp.sls.component.XorGate;
 
 /**	
  * Component for showing all components and enabling drag and drop creation.
@@ -51,11 +55,16 @@ public class ComponentPanel extends JPanel {
 	//All components to show
 	private ComponentView andGate;
 	private ComponentView notGate;
-	private ComponentView constantGate;
+	private ComponentView constantGateLOW;
+	private ComponentView constantGateHIGH;
 	private ComponentView nandGate;
 	private ComponentView orGate;
-	//private ComponentView norGate;	//TODO add when finished
-	//private ComponentView xorGate;	//TODO add when finished
+	private ComponentView norGate;
+	private ComponentView xorGate;
+	private ComponentView nxorGate;
+	
+	//Component for gate initialization
+	private Component gate;
 	
 	/**
 	 * Creates the component panel, from which you can drag-out components to the SimulationBoard
@@ -73,43 +82,84 @@ public class ComponentPanel extends JPanel {
 		
 		//add the layout to this component
 		this.setLayout(layout);
-
+		
 		//Initiate the ComponentViews
-		andGate = new GateView(new AndGate("AndGate"));
-		notGate = new GateView(new NotGate("NotGate"));
-		constantGate = new GateView(new ConstantGate("ConstantGate", Signal.State.LOW));
-		nandGate = new GateView(new NandGate("NandGate"));
-		orGate = new GateView(new OrGate("OrGate"));
-		//norGate = new GateView(new NorGate("NorGate"));	//TODO add when finished
-		//xorGate = new GateView(new XorGate("XorGate"));	//TODO add when finished
+		gate = new ConstantGate("ConstantGate", Signal.State.LOW);
+		constantGateLOW = new GateView(gate);
+		
+		gate = new ConstantGate("ConstantGate", Signal.State.HIGH);
+		constantGateHIGH = new GateView(gate);
+		
+		gate = new AndGate("Andgate");
+		gate.getInput("input");
+		gate.getInput("input2");
+		andGate = new GateView(gate);
+		
+		gate = new NotGate("Notgate");
+		gate.getInput("input");
+		gate.getInput("input2");
+		notGate = new GateView(gate);
+		
+		gate = new NandGate("NandGate");
+		gate.getInput("input");
+		gate.getInput("input2");
+		nandGate = new GateView(gate);
+		
+		gate = new OrGate("OrGate");
+		gate.getInput("input");
+		gate.getInput("input2");
+		orGate = new GateView(gate);
+		
+		gate = new NorGate("NorGate");
+		gate.getInput("input");
+		gate.getInput("input2");
+		norGate = new GateView(gate);	
+		
+		gate = new XorGate("XorGate");
+		gate.getInput("input");
+		gate.getInput("input2");
+		xorGate = new GateView(gate);
+		
+		gate = new NxorGate("NxorGate");
+		gate.getInput("input");
+		gate.getInput("input2");
+		nxorGate = new GateView(gate);
 		
 		//set the size of the components
 		andGate.setMaximumSize(new Dimension(ComponentView.componentSize,2));
 		notGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
-		constantGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
+		constantGateLOW.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
+		constantGateHIGH.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
 		nandGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
 		orGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
-		//norGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));	//TODO add when finished
-		//xorGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));	//TODO add when finished
+		norGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));	
+		xorGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));	
+		nxorGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));	
+
 		
-		//Add the ConstantGate to CompontPanel
+		//Add the ConstantGate (Signal.State.HIGH) to CompontPanel
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		this.add( constantGate, constraints );
+		this.add( constantGateHIGH, constraints );
+		
+		//Add the ConstantGate (Signal.State.LOW) to CompontPanel
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		this.add( constantGateLOW, constraints );
 		
 		//Add the NotGate to CompontPanel
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 2;
 		this.add( notGate, constraints );
 		
 		//Add the AndGate to CompontPanel
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 3;
 		this.add( andGate, constraints );
 	
 		//Add the OrGate to CompontPanel
 		constraints.gridx = 0;
-		constraints.gridy = 3;
+		constraints.gridy = 4;
 		this.add( orGate, constraints );
 
 		//Add the NandGate to CompontPanel
@@ -120,13 +170,19 @@ public class ComponentPanel extends JPanel {
 		//Add the NorGate to CompontPanel
 		constraints.gridx = 1;
 		constraints.gridy = 1;
-		//this.add( norGate, constraints );	//TODO add when finished
+		this.add( norGate, constraints );	
 
 		//Add the XorGate to CompontPanel
 		constraints.gridx = 1;
 		constraints.gridy = 2;
-		//this.add(xorGate, constraints );	//TODO add when finished
-
+		this.add(xorGate, constraints );	
+		
+		//Add the NxorGate to CompontPanel
+		constraints.gridx = 1;
+		constraints.gridy = 3;
+		this.add(nxorGate, constraints );	
+		
+	
 		/**
 		 * Enable drag and drop listener, by sending a string to the receiver
 		 */
