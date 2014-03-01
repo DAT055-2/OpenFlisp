@@ -77,6 +77,9 @@ public class SimulationBoard extends JPanel{
 	// A panel containing the background
 	private JPanel backgroundPanel;
 	
+	// Panel containing wires
+	private WirePanel WirePanel;
+	
 	// We need this point when moving components
 	Point point;
 
@@ -143,17 +146,21 @@ public class SimulationBoard extends JPanel{
 
 		this.backgroundPanel = new BackgroundPanel();
 		this.backgroundPanel.setOpaque(true);
+		
+		this.wirePanel = new WirePanel(this);
+		this.wirePanel.setLayout(null);
+		this.wirePanel.setOpaque(false);
+
 
 		// This will add the panels to our layeredPane in order to make a transparent components
 		this.components = new HashMap<Component, ComponentView>();
 		this.add(backgroundPanel, new Integer(0), 0);
-		this.add(componentLayer, new Integer(1),0);
+		this.add(wirePanel, new Integer(1), 0);
+		this.add(componentLayer, new Integer(2),0);
 
 		// Set a listener on the circuit
 		this.circuit.getEventDelegator().addListener(ListenerContext.SWING,circtuitHandler);
 
-		//This is a test method
-		//simulationTest();
 	}
 
 	/**
@@ -164,6 +171,14 @@ public class SimulationBoard extends JPanel{
 		component.setOpaque(false);
 		this.componentLayer.add(component);
 		this.components.put(component.component, component);
+		
+		for( SignalView view : ((GateView) component).outputSignals) {
+			view.addPropertyChangeListener(wirePanel);
+		}
+
+		for( SignalView view : ((GateView) component).inputSignals) {
+			view.addPropertyChangeListener(wirePanel);
+		}
 		
 		if (component instanceof GateView) {
 			JPanel identifierPanel = ((GateView) component).getIdentifierPane();
