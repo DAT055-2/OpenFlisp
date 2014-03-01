@@ -18,7 +18,15 @@ package se.openflisp.gui.swing.components;
 
 import se.openflisp.sls.Component;
 import se.openflisp.sls.component.AndGate;
+import se.openflisp.sls.component.ConstantGate;
+import se.openflisp.sls.component.Gate;
+import se.openflisp.sls.component.NandGate;
+import se.openflisp.sls.component.NorGate;
 import se.openflisp.sls.component.NotGate;
+import se.openflisp.sls.component.NxorGate;
+import se.openflisp.sls.component.OrGate;
+import se.openflisp.sls.component.XorGate;
+import se.openflisp.sls.Signal;
 
 /**	
  * A Factory for creating ComponentViews 
@@ -42,11 +50,52 @@ public class ComponentFactory {
 			if(identifier.equals("AndGate")) {
 				AndGate andGate = new AndGate("AndGate" + Integer.toString(gateNum++));
 				andGate.getInput("input" + Integer.toString(inputNum++));
+				andGate.getInput("input" + Integer.toString(inputNum++));
 				return new GateView(andGate);
 			}
-			else if(identifier.equals("NotGate")) 
-				return new GateView(new NotGate("NotGate"));
-			
+			else if(identifier.equals("NotGate")) { 
+				NotGate notGate = new NotGate("NotGate" + Integer.toString(gateNum++));
+				notGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(notGate);
+			}
+			else if(identifier.equals("ConstantOneGate")) { 
+				ConstantGate constantGate = new ConstantGate("ConstantOneGate" + Integer.toString(gateNum++), Signal.State.HIGH);
+				return new GateView(constantGate);
+			}
+			else if(identifier.equals("ConstantZeroGate")) { 
+				ConstantGate constantGate = new ConstantGate("ConstantZeroGate" + Integer.toString(gateNum++), Signal.State.LOW);
+				return new GateView(constantGate);
+			}
+			else if(identifier.equals("NandGate")) { 
+				NandGate nandGate = new NandGate("NandGate" + Integer.toString(gateNum++));
+				nandGate.getInput("input" + Integer.toString(inputNum++));
+				nandGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(nandGate);
+			}
+			else if(identifier.equals("OrGate")) { 
+				OrGate orGate = new OrGate("OrGate" + Integer.toString(gateNum++));
+				orGate.getInput("input" + Integer.toString(inputNum++));
+				orGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(orGate);
+			}
+			else if(identifier.equals("XorGate")) { 
+				XorGate xorGate = new XorGate("XorGate" + Integer.toString(gateNum++));
+				xorGate.getInput("input" + Integer.toString(inputNum++));
+				xorGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(xorGate);
+			}
+			else if(identifier.equals("NorGate")) { 
+				NorGate norGate = new NorGate("NorGate" + Integer.toString(gateNum++));
+				norGate.getInput("input" + Integer.toString(inputNum++));
+				norGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(norGate);
+			}
+			else if(identifier.equals("NxorGate")) { 
+				NxorGate nxorGate = new NxorGate("NxorGate" + Integer.toString(gateNum++));
+				nxorGate.getInput("input" + Integer.toString(inputNum++));
+				nxorGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(nxorGate);
+			}
 		} catch (Exception e) {
 			System.out.println("Something went wrong when creating a ComponentView");
 			return null;
@@ -61,13 +110,8 @@ public class ComponentFactory {
 	 */
 	public static GateView createGateFromComponent(Component component) {
 		try {
-			
-			if(component instanceof AndGate) 
+			if(component instanceof Gate) 
 				return new GateView(component);
-			
-			else if(component instanceof NotGate) 
-				return new GateView(component);
-			
 		} catch (Exception e) {
 			System.out.println("Something went wrong when creating a ComponentView");
 			return null;
