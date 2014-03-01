@@ -18,20 +18,16 @@ package se.openflisp.gui.swing.components;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D.Float;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-
 
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 import se.openflisp.sls.Input;
 import se.openflisp.sls.Signal;
@@ -63,28 +59,19 @@ public class SignalView extends JButton {
 	//We need this to determine if a x.y coordinate is whithin this button
 	private Shape shape;
 
-	//Will listen for mouse events
-	private SignalViewListener signalViewListener = new SignalViewListener();
-
-	// Testing propertychanged support
-	private PropertyChangeSupport changes;
-
 	public se.openflisp.sls.Component component;
 
-	public SignalView(Signal signal){
+	public SignalView(Signal signal) {
 		this.component = signal.getOwner();
-		setPreferredSize(btnSize);
+		this.setPreferredSize(btnSize);
 		this.signal = signal;
-		setContentAreaFilled(false);	
-		this.addMouseListener(signalViewListener);
-		this.addMouseMotionListener(signalViewListener);
+		this.setContentAreaFilled(false);
 		this.component.getEventDelegator().addListener(ListenerContext.SWING, new ComponentAdapter() {
 			@Override
 			public void onSignalChange(se.openflisp.sls.Component component, Signal signal) {
 				if (signal == SignalView.this.signal) {
 					SignalView.this.repaint();
 					SignalView.this.revalidate();
-					changes.firePropertyChange("SignalChange", component, signal);
 				}
 			}
 		});
@@ -154,27 +141,12 @@ public class SignalView extends JButton {
 		return shape.contains(x, y);
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener l) 
-	{
-		if (changes == null)
-			changes = new PropertyChangeSupport(this);
-		changes.addPropertyChangeListener(l);
-	}
-
-
-	private class SignalViewListener extends MouseAdapter implements MouseListener {
-		@Override
-		public void mouseDragged(MouseEvent event) {
-			changes.firePropertyChange("drag", event.getX(), event.getY());
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent event) {
-			changes.firePropertyChange("released", null, event);
-		}
+	public Point getPosition(Component context) {
+		return SwingUtilities.convertPoint(
+			this,
+			this.getLocation().x + SignalView.btnSize.width,
+			this.getLocation().y - (SignalView.btnSize.height + SignalView.arcLength/2),
+			context
+		);
 	}
 }

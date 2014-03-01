@@ -140,7 +140,7 @@ public class SimulationBoard extends JPanel {
 		this.componentLayer.setLayout(null);
 		this.componentLayer.setOpaque(false);
 
-		this.wirePanel = new WirePanel(this);
+		this.wirePanel = new WirePanel();
 		this.wirePanel.setLayout(null);
 		this.wirePanel.setOpaque(false);
 
@@ -157,7 +157,7 @@ public class SimulationBoard extends JPanel {
 		this.componentLayer.requestFocusInWindow();
 
 		// Set a listener on the circuit
-		this.circuit.getEventDelegator().addListener(ListenerContext.SWING,circtuitHandler);
+		this.circuit.getEventDelegator().addListener(ListenerContext.SWING, circtuitHandler);
 
 	}
 
@@ -170,13 +170,8 @@ public class SimulationBoard extends JPanel {
 		this.componentLayer.add(component);
 		this.components.put(component.component, component);
 
-		for( SignalView view : ((GateView) component).outputSignals) {
-			view.addPropertyChangeListener(wirePanel);
-		}
-
-		for( SignalView view : ((GateView) component).inputSignals) {
-			view.addPropertyChangeListener(wirePanel);
-		}
+		
+		this.wirePanel.handleComponentAdded(component);
 
 		if (component instanceof GateView) {
 			component.addMouseMotionListener(new MouseMotionAdapter()  {
@@ -267,6 +262,7 @@ public class SimulationBoard extends JPanel {
 		@Override
 		public void onComponentMoved(Component component, Point from, Point to) {
 			SimulationBoard.this.components.get(component).setBounds(to.x,to.y,ComponentView.componentSize*2,ComponentView.componentSize);
+			SimulationBoard.this.wirePanel.handleComponentMoved(SimulationBoard.this.components.get(component));
 		}
 	};
 

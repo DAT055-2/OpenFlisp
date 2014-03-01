@@ -17,7 +17,10 @@
 package se.openflisp.gui.swing.components;
 
 import java.awt.dnd.DragSource;
+import java.util.Set;
+
 import javax.swing.JPanel;
+
 import se.openflisp.sls.Component;
 
 /**	
@@ -36,5 +39,13 @@ public abstract class ComponentView extends JPanel {
 	
 	public ComponentView(Component component) {
 		this.component = component;
+	}
+	
+	public Set<SignalView> getInputViews() {
+		return null;
+	}
+	
+	public Set<SignalView> getOutputViews() {
+		return null;
 	}
 }

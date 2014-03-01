@@ -20,16 +20,16 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 
 import se.openflisp.sls.Component;
 import se.openflisp.sls.Input;
@@ -144,5 +144,13 @@ public class GateView extends ComponentView {
 	
 	public JPanel getIdentifierPane() {
 		return this.identifierPanel;
+	}
+	
+	public Set<SignalView> getInputViews() {
+		return new HashSet<SignalView>(this.inputSignals);
+	}
+	
+	public Set<SignalView> getOutputViews() {
+		return new HashSet<SignalView>(this.outputSignals);
 	}
 }
