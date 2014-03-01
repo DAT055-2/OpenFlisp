@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 
 import se.openflisp.sls.Input;
+import se.openflisp.sls.Output;
 import se.openflisp.sls.Signal;
 import se.openflisp.sls.component.NandGate;
 import se.openflisp.sls.component.NorGate;
@@ -66,7 +67,7 @@ public class SignalView extends JButton {
 		this.setPreferredSize(btnSize);
 		this.signal = signal;
 		this.setContentAreaFilled(false);
-		this.component.getEventDelegator().addListener(ListenerContext.SWING, new ComponentAdapter() {
+		this.signal.getOwner().getEventDelegator().addListener(ListenerContext.SWING, new ComponentAdapter() {
 			@Override
 			public void onSignalChange(se.openflisp.sls.Component component, Signal signal) {
 				if (signal == SignalView.this.signal) {
@@ -142,11 +143,22 @@ public class SignalView extends JButton {
 	}
 
 	public Point getPosition(Component context) {
-		return SwingUtilities.convertPoint(
-			this,
-			this.getLocation().x + SignalView.btnSize.width,
-			this.getLocation().y - (SignalView.btnSize.height + SignalView.arcLength/2),
-			context
-		);
+		if (this.signal instanceof Output) {
+
+			return SwingUtilities.convertPoint(
+					this.getParent(),
+					this.getLocation().x + (btnSize.width),
+					this.getLocation().y + (arcLength) / 2,
+					context
+					);
+		} else {
+			return SwingUtilities.convertPoint(
+					this.getParent(),
+					this.getLocation().x,
+					this.getLocation().y + (SignalView.arcLength) / 2,
+					context
+					);
+		}
+
 	}
 }
