@@ -18,7 +18,11 @@ package se.openflisp.gui.swing.components;
 
 import se.openflisp.sls.Component;
 import se.openflisp.sls.component.AndGate;
+import se.openflisp.sls.component.ConstantGate;
+import se.openflisp.sls.component.NandGate;
 import se.openflisp.sls.component.NotGate;
+import se.openflisp.sls.component.OrGate;
+import se.openflisp.sls.Signal;
 
 /**	
  * A Factory for creating ComponentViews 
@@ -42,11 +46,34 @@ public class ComponentFactory {
 			if(identifier.equals("AndGate")) {
 				AndGate andGate = new AndGate("AndGate" + Integer.toString(gateNum++));
 				andGate.getInput("input" + Integer.toString(inputNum++));
+				andGate.getInput("input" + Integer.toString(inputNum++));
 				return new GateView(andGate);
 			}
-			else if(identifier.equals("NotGate")) 
-				return new GateView(new NotGate("NotGate"));
-			
+			else if(identifier.equals("NotGate")) { 
+				NotGate notGate = new NotGate("NotGate" + Integer.toString(gateNum++));
+				notGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(notGate);
+			}
+			else if(identifier.equals("ConstantOneGate")) { 
+				ConstantGate constantGate = new ConstantGate("ConstantGate" + Integer.toString(gateNum++), Signal.State.HIGH);
+				return new GateView(constantGate);
+			}
+			else if(identifier.equals("ConstantZeroGate")) { 
+				ConstantGate constantGate = new ConstantGate("ConstantGate" + Integer.toString(gateNum++), Signal.State.LOW);
+				return new GateView(constantGate);
+			}
+			else if(identifier.equals("NandGate")) { 
+				NandGate nandGate = new NandGate("ConstantGate" + Integer.toString(gateNum++));
+				nandGate.getInput("input" + Integer.toString(inputNum++));
+				nandGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(nandGate);
+			}
+			else if(identifier.equals("OrGate")) { 
+				OrGate orGate = new OrGate("ConstantGate" + Integer.toString(gateNum++));
+				orGate.getInput("input" + Integer.toString(inputNum++));
+				orGate.getInput("input" + Integer.toString(inputNum++));
+				return new GateView(orGate);
+			}
 		} catch (Exception e) {
 			System.out.println("Something went wrong when creating a ComponentView");
 			return null;
