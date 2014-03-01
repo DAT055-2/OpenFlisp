@@ -21,6 +21,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 
 import javax.swing.JButton;
@@ -42,14 +44,37 @@ public class WireView extends JButton {
 	
 	private SignalView end;
 	
+	private boolean selected = false;
+	
 	public WireView(WirePanel panel, SignalView start) {
 		this.panel = panel;
 		this.start = start;
 		this.setContentAreaFilled(false);
+		this.addMouseListener(this.wireSelectionHandler);
 	}
 	
 	public SignalView getStart() {
 		return this.start;
+	}
+	
+	public SignalView getEnd() {
+		return this.end;
+	}
+	
+	public boolean isSelected() {
+		return this.selected;
+	}
+	
+	public void deselect() {
+		this.selected = false;
+		this.repaint();
+		this.revalidate();
+	}
+	
+	public void select() {
+		this.selected = true;
+		this.repaint();
+		this.revalidate();
 	}
 
 	public void attatchEnd(SignalView end) {
@@ -90,7 +115,11 @@ public class WireView extends JButton {
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(6));
-		g2.setColor(Color.black);
+		if (this.isSelected()) {
+			g2.setColor(Color.orange);
+		} else {
+			g2.setColor(Color.black);
+		}
 		g2.draw(this.wire);
 		switch (this.start.signal.getState()) {
 			case HIGH:
@@ -106,4 +135,16 @@ public class WireView extends JButton {
 		g2.setStroke(new BasicStroke(4));
 		g2.draw(this.wire);
 	}
+	
+	@Override
+	public boolean contains(int x, int y) {
+		return this.wire.intersects(x - 5, y - 5, 10, 10);
+	}
+	
+	private final MouseAdapter wireSelectionHandler = new MouseAdapter() {
+		@Override
+		public void mousePressed(MouseEvent evt) {
+			WireView.this.selected = true;
+		}
+	};
 }

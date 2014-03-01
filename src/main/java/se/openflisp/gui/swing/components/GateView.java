@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -141,10 +142,11 @@ public class GateView extends ComponentView {
 		add(identifier, BorderLayout.CENTER);
 		add(outputPanel, BorderLayout.EAST);
 	}
-	
+	/*
 	public JPanel getIdentifierPane() {
 		return this.identifierPanel;
 	}
+	*/
 	
 	public Set<SignalView> getInputViews() {
 		return new HashSet<SignalView>(this.inputSignals);
@@ -152,5 +154,9 @@ public class GateView extends ComponentView {
 	
 	public Set<SignalView> getOutputViews() {
 		return new HashSet<SignalView>(this.outputSignals);
+	}
+	
+	public JComponent getBodyComponent() {
+		return this.identifier;
 	}
 }

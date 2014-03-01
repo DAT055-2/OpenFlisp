@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -30,18 +29,14 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 
 import se.openflisp.sls.event.CircuitListener;
 import se.openflisp.sls.event.ListenerContext;
@@ -75,10 +70,7 @@ public class SimulationBoard extends JPanel {
 
 	// A panel containing wires
 	private WirePanel wirePanel;
-
-	// We need this point when moving components
-	Point point;
-
+	
 	/**
 	 * Creates the simulation board
 	 */
@@ -169,58 +161,9 @@ public class SimulationBoard extends JPanel {
 		component.setOpaque(false);
 		this.componentLayer.add(component);
 		this.components.put(component.component, component);
-
 		
-		this.wirePanel.handleComponentAdded(component);
-
-		if (component instanceof GateView) {
-			component.addMouseMotionListener(new MouseMotionAdapter()  {
-
-
-				@Override
-				public void mouseMoved(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public void mouseDragged(MouseEvent mouseevent) {
-					if (mouseevent.getComponent().getComponentAt(mouseevent.getPoint()) instanceof JLabel && SimulationBoard.this.point != null) {
-						Point delta = new Point(mouseevent.getX() - SimulationBoard.this.point.x, 
-								mouseevent.getY() - SimulationBoard.this.point.y );
-						Point curLocation = SimulationBoard.this.circuit.getComponentLocation(((GateView)mouseevent.getSource()).component);
-
-						SimulationBoard.this.circuit.setComponentLocation(((GateView)mouseevent.getSource()).component,
-								new Point(curLocation.x + delta.x, curLocation.y + delta.y));
-					}
-				}
-			});
-			component.addMouseListener(new MouseListener() {
-
-				@Override
-				public void mouseClicked(MouseEvent mouseevent) {
-
-				}
-
-				@Override
-				public void mouseEntered(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public void mouseExited(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public void mousePressed(MouseEvent mouseevent) {
-					SimulationBoard.this.point = mouseevent.getPoint();
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent arg0) {
-				}
-			});
-		}
+		component.addMouseListener(this.componentMovementHandler);
+		component.addMouseMotionListener(this.componentMovementHandler);
 	}
 
 	/**
@@ -246,13 +189,14 @@ public class SimulationBoard extends JPanel {
 		@Override
 		public void onComponentAdded(Component component) {
 			addComponent(ComponentFactory.createGateFromComponent(component));
+			SimulationBoard.this.wirePanel.handleComponentAdded(SimulationBoard.this.components.get(component));
 			SimulationBoard.this.repaint();
 			SimulationBoard.this.revalidate();
 		}
 
 		@Override
 		public void onComponentRemoved(Component component) {
-
+			SimulationBoard.this.wirePanel.handleComponentRemoved(SimulationBoard.this.components.get(component));
 		}
 
 		/**
@@ -299,4 +243,42 @@ public class SimulationBoard extends JPanel {
 			super.paintComponent(g2);
 		}
 	}
+	
+	private final MouseAdapter componentMovementHandler = new MouseAdapter()  {
+		private Point point;
+		private ComponentView draggedComponent;
+		
+		@Override
+		public void mouseDragged(MouseEvent evt) {
+			if (this.draggedComponent != null) {
+				Point componentLocation = SimulationBoard.this.circuit.getComponentLocation(
+					this.draggedComponent.getComponent()
+				);
+				Point point = new Point(
+						componentLocation.x + (evt.getX() - this.point.x), 
+						componentLocation.y + (evt.getY() - this.point.y)
+				);
+				SimulationBoard.this.circuit.setComponentLocation(
+					this.draggedComponent.getComponent(), 
+					point
+				);
+				
+			}
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent evt) {
+			if (evt.getComponent().getComponentAt(evt.getPoint()) instanceof JLabel) {
+				System.out.println("Component pressed: " + evt);
+				
+				this.draggedComponent = (ComponentView) evt.getComponent();
+				this.point = evt.getPoint();
+			}
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent evt) {
+			this.draggedComponent = null;
+		}
+	};
 }
