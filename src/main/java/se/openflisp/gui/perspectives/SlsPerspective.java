@@ -28,6 +28,11 @@ import bibliothek.gui.dock.DefaultDockable;
  * @version 1.0
  */
 public class SlsPerspective extends Perspective {
+	
+	private SimulationBoard simulationBoard;
+	
+	public static final String IDENTIFIER = "Sequential Logical simulation";
+	
 	/**
 	 * Creates the Sequential logic simulation perspective
 	 * @param theme		the theme to use with this perspective
@@ -36,11 +41,17 @@ public class SlsPerspective extends Perspective {
 		super(theme);
 		
 		// Set identifier
-		this.identifier = "Sequential Logical simulation";
+		this.identifier = IDENTIFIER;
+		
+		this.simulationBoard = new SimulationBoard();
 		
 		//Set grid
-		dockGrid.addDockable(0, 0, 2, 1, new DefaultDockable(new SimulationBoard()));
+		dockGrid.addDockable(0, 0, 2, 1, new DefaultDockable(this.simulationBoard));
 		dockGrid.addDockable(0, 0, 1 ,1, new DefaultDockable(new ComponentPanel()));
 		station.dropTree( dockGrid.toTree());
+	}
+	
+	public SimulationBoard getSimulationBoard() {
+		return this.simulationBoard;
 	}
 }

@@ -10,6 +10,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import se.openflisp.gui.perspectives.SlsPerspective;
+
 /**
  * Creates the menubar and its items
  * 
@@ -17,64 +19,64 @@ import javax.swing.KeyStroke;
  * @version 1.0
  *
  */
-
 public class OpenFlispMenu implements ActionListener {
-	JMenuBar menubar;
-	JMenu menu2;
-	JMenuItem menu_item1, menu_close, menu_about;
-	OpenFlispFrame frame;
 	
-	/*
-	 * Add the menu to the OpenFlispFrame
-	 */
-	public void addMenuToFrame(OpenFlispFrame frame)	{
+	private final OpenFlispFrame frame;
+	
+	private JMenuBar menuBar;
+
+	private JMenuItem clearBoard, quitApplication, openHelp;
+	
+	public OpenFlispMenu(OpenFlispFrame frame) {
 		this.frame = frame;
-		menubar = new JMenuBar();
+		this.initilize();
+	}
+
+	protected void initilize()	{
+		this.clearBoard = new JMenuItem("Rensa kopplingsbordet");
+		this.clearBoard.addActionListener(this);
+		this.clearBoard.setAccelerator(KeyStroke.getKeyStroke(
+			KeyEvent.VK_BACK_SPACE, ActionEvent.CTRL_MASK
+		));
 		
-		JMenu menu = new JMenu("Arkiv");	//the arkiv menu
-		menubar.add(menu); 
-		frame.setJMenuBar(menubar);
+		this.quitApplication = new JMenuItem("Avsluta");
+		this.quitApplication.addActionListener(this);
+		this.quitApplication.setAccelerator(KeyStroke.getKeyStroke(
+			KeyEvent.VK_Q, ActionEvent.META_MASK
+		));
 		
-		/* First item in in "Arkiv" */
-		menu_item1 = new JMenuItem("Logik", KeyEvent.VK_T); 
-		menu_item1.addActionListener(this);
-		menu_item1.setAccelerator(KeyStroke.getKeyStroke(
-		        KeyEvent.VK_1, ActionEvent.ALT_MASK)); //open with alt-1
-		menu.add(menu_item1);
+		this.openHelp = new JMenuItem("Om OpenFlisp");
+		this.openHelp.addActionListener(this);
+		this.openHelp.setAccelerator(KeyStroke.getKeyStroke(
+			KeyEvent.VK_H, ActionEvent.CTRL_MASK
+		));
 		
-		/* Close the application from the menu */
-		menu.addSeparator();
-		menu_close = new JMenuItem("Avsluta");
-		menu_close.addActionListener(this);
-		menu.add(menu_close);
-		menu_close.setAccelerator(KeyStroke.getKeyStroke(
-		        KeyEvent.VK_2, ActionEvent.ALT_MASK)); //close with alt-2
+		JMenu archiveMenu = new JMenu("Arkiv");	
+		archiveMenu.add(this.clearBoard);
+		archiveMenu.add(this.quitApplication);
 		
-		/* The second menu */
-		menu2 = new JMenu("Hjälp");
-		menu_about = new JMenuItem("Om OpenFlisp");
-		menu2.add(menu_about);
-		menu_about.addActionListener(this);
-		menubar.add(menu2);
+		JMenu helpMenu = new JMenu("Hjälp");
+		helpMenu.add(this.openHelp);
 		
+		this.menuBar = new JMenuBar();
+		this.menuBar.add(archiveMenu);
+		this.menuBar.add(helpMenu);
 		
+		this.frame.setJMenuBar(this.menuBar);
 	}
 	
 	public void actionPerformed(ActionEvent e)	{
-		//close the application
-		if (e.getSource() == menu_close)	{
+		if (e.getSource() == this.quitApplication)	{
 			System.exit(0);
+		} else if (e.getSource() == this.openHelp)	{
+			JOptionPane.showMessageDialog(
+				null,
+				"Detta är en prototyp. \nVersion: 2014-01-31\nAv: Johan & Fiona","OpenFlisp",
+				JOptionPane.INFORMATION_MESSAGE
+			);
+		} else if (e.getSource() == this.clearBoard)	{
+			SlsPerspective sls = (SlsPerspective) this.frame.getPerspectives().getPerspective(SlsPerspective.IDENTIFIER);
+			sls.getSimulationBoard().clearBoard();
 		}
-		//show the Help menu
-		if (e.getSource() == menu_about)	{
-			JOptionPane.showMessageDialog(null,"Detta är en prototyp. \nVersion: 2014-01-31\nAv: Johan & Fiona","OpenFlisp", JOptionPane.INFORMATION_MESSAGE);
-		}
-		//open the logic simulation
-		if (e.getSource() == menu_item1)	{
-			OpenFlispPerspectives view = new OpenFlispPerspectives();
-			view.addComponentToPane(frame.getContentPane());
-		}
-
 	}
-
 }

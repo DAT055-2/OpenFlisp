@@ -37,6 +37,7 @@ import se.openflisp.gui.swing.OpenFlispPerspectives;
 public class OpenFlispFrame extends JFrame {
 	
 	private OpenFlispPerspectives perspectives;
+	
 	private OpenFlispMenu menu;
 	
 	/**
@@ -66,10 +67,13 @@ public class OpenFlispFrame extends JFrame {
 		this.perspectives.addComponentToPane(this.getContentPane());
 		
 		// Add the menubar to this frame
-		this.menu = new OpenFlispMenu();
-		this.menu.addMenuToFrame(this);
+		this.menu = new OpenFlispMenu(this);
 		
 		this.pack();
 		this.setVisible(true);
+	}
+	
+	public OpenFlispPerspectives getPerspectives() {
+		return this.perspectives;
 	}
 }	

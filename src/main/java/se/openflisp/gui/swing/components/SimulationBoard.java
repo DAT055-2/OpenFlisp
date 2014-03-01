@@ -184,6 +184,12 @@ public class SimulationBoard extends JPanel {
 		this.components.remove(component.getComponent());
 		this.componentLayer.remove(component);
 	}
+	
+	public void clearBoard() {
+		for (Entry<Component, ComponentView> entry : SimulationBoard.this.components.entrySet()) {
+			SimulationBoard.this.circuit.removeComponent(entry.getKey());
+		}
+	}
 
 	/**
 	 * We need to override the painting

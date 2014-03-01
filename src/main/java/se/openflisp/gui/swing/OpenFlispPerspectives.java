@@ -110,4 +110,13 @@ public class OpenFlispPerspectives extends JPanel implements ItemListener {
 	        //Change to the choosen layout
 	        cl.show(this, (String)evt.getItem());
 	}
+	
+	public Perspective getPerspective(String identifier) {
+		for(Perspective perspective : this.perspectives) {
+			if (perspective.getIdentifier().equals(identifier)) {
+				return perspective;
+			}
+		}
+		return null;
+	}
 }
