@@ -187,4 +187,11 @@ public class CircuitTest {
 		circuit.removeComponent(component2);
 		verify(delegator).onComponentRemoved(component2);
 	}
+	
+	@Test
+	public void testRemovingComponentWithoutConnection() {
+		circuit.addComponent(component1);
+		circuit.removeComponent(component1);
+		assertThat(circuit.getComponents(), not(hasItems(component1)));
+	}
 }

@@ -134,11 +134,15 @@ public class Circuit {
 			component.getEventDelegator().removeListener(ListenerContext.MODEL, this.connectionHandler);
 			component.getEventDelegator().removeListener(ListenerContext.MODEL, this.simulationThread.signalHandler);
 			for (Input input : component.getInputs()) {
-				input.disconnect(input.getConnection());
+				if (input.isConnected()) {
+					input.disconnect(input.getConnection());
+				}
 			}
 			for (Output output : component.getOutputs()) {
 				for (Input input : output.getConnections()) {
-					output.disconnect(input);
+					if (input.isConnected()) {
+						output.disconnect(input);
+					}
 				}
 			}
 			this.getEventDelegator().onComponentRemoved(component);
