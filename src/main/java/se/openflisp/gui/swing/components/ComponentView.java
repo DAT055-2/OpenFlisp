@@ -50,18 +50,6 @@ public abstract class ComponentView extends JPanel {
 		return this.component;
 	}
 	
-	public JComponent getBodyComponent() {
-		return null;
-	}
-	
-	public Set<SignalView> getInputViews() {
-		return null;
-	}
-	
-	public Set<SignalView> getOutputViews() {
-		return null;
-	}
-	
 	public boolean isSelected() {
 		return this.selected;
 	}
@@ -73,4 +61,11 @@ public abstract class ComponentView extends JPanel {
 	public void deselect() {
 		this.selected = false;
 	}
+	
+	public abstract JComponent getBodyComponent();
+	
+	public abstract Set<SignalView> getInputViews();
+	
+	public abstract Set<SignalView> getOutputViews();
+	
 }

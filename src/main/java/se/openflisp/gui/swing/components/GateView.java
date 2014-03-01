@@ -39,7 +39,6 @@ import se.openflisp.sls.Signal;
 import se.openflisp.gui.swing.components.ComponentView;
 import se.openflisp.sls.component.*;
 
-
 /**	
  * A Viewier for gates
  * 
@@ -53,11 +52,12 @@ public class GateView extends ComponentView {
 	 * In order to make the input and output panels transparent we need to put them in diffrent jpanels
 	 */
 	private JPanel identifierPanel;
-	private JPanel	inputPanel;
-	private	 JPanel	outputPanel;
-	private JLabel	identifier;
-	public List<SignalView> 	outputSignals;
-	public List<SignalView> 	inputSignals;
+	private JPanel inputPanel;
+	private	JPanel outputPanel;
+	private JLabel identifier;
+	
+	private List<SignalView> 	outputSignals;
+	private List<SignalView> 	inputSignals;
 
 	/**
 	 * Creates a new gateview given a component
@@ -81,11 +81,12 @@ public class GateView extends ComponentView {
 		if (component instanceof NotGate){
 			this.identifier.setText("1");
 		}		
-		else if (component  instanceof ConstantGate) {
-			if (((ConstantGate) this.getComponent()).getConstantState() == Signal.State.HIGH) 
+		else if (component instanceof ConstantGate) {
+			if (((ConstantGate) this.getComponent()).getConstantState() == Signal.State.HIGH) {
 				this.identifier.setText("1");
-			else
+			} else {
 				this.identifier.setText("0");
+			}
 		}	
 		else if ( (component instanceof OrGate) || (component instanceof NorGate) ) {
 			this.identifier.setText("\u22651");
@@ -103,7 +104,6 @@ public class GateView extends ComponentView {
 		this.identifier.setPreferredSize(new Dimension(componentSize, componentSize));
 		this.identifier.setMaximumSize(new Dimension(componentSize, componentSize));
 		this.identifier.setMinimumSize(new Dimension(componentSize, componentSize));
-		
 		
 		this.inputSignals = new ArrayList<SignalView>();
 		this.outputSignals = new ArrayList<SignalView>();
