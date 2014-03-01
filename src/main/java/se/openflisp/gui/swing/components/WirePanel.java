@@ -7,6 +7,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -21,7 +23,7 @@ import se.openflisp.sls.Input;
 @SuppressWarnings("serial")
 public class WirePanel extends JPanel {
 
-	private Map<SignalView, WireView> activeWires = new HashMap<SignalView, WireView>();
+	private Map<SignalView, List<WireView>> activeWires = new HashMap<SignalView, List<WireView>>();
 	
 	public WirePanel() {
 		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
@@ -40,6 +42,12 @@ public class WirePanel extends JPanel {
 	}
 	
 	protected void removeWire(WireView wire) {
+		if (this.activeWires.containsKey(wire.getStart())) {
+			this.activeWires.get(wire.getStart()).remove(wire);
+		}
+		if (this.activeWires.containsKey(wire.getEnd())) {
+			this.activeWires.get(wire.getEnd()).remove(wire);
+		}
 		this.remove(wire);
 		this.repaint();
 		this.revalidate();
@@ -59,12 +67,16 @@ public class WirePanel extends JPanel {
 	public void handleComponentRemoved(ComponentView component) {
 		for (SignalView signal : component.getInputViews()) {
 			if (this.activeWires.containsKey(signal)) {
-				this.removeWire(this.activeWires.get(signal));
+				for (WireView wire : this.activeWires.get(signal)) {
+					this.removeWire(wire);
+				}
 			}
 		}
 		for (SignalView signal : component.getOutputViews()) {
 			if (this.activeWires.containsKey(signal)) {
-				this.removeWire(this.activeWires.get(signal));
+				for (WireView wire : this.activeWires.get(signal)) {
+					this.removeWire(wire);
+				}
 			}
 		}
 	}
@@ -72,19 +84,25 @@ public class WirePanel extends JPanel {
 	public void handleComponentMoved(ComponentView component) {
 		for (SignalView signal : component.getInputViews()) {
 			if (this.activeWires.containsKey(signal)) {
-				this.activeWires.get(signal).updatePositions();
+				for (WireView wire : this.activeWires.get(signal)) {
+					wire.updatePositions();
+				}
 			}
 		}
 		for (SignalView signal : component.getOutputViews()) {
 			if (this.activeWires.containsKey(signal)) {
-				this.activeWires.get(signal).updatePositions();
+				for (WireView wire : this.activeWires.get(signal)) {
+					wire.updatePositions();
+				}
 			}
 		}
 	}
 	
 	public void deselectAllWires() {
-		for (WireView wire : WirePanel.this.activeWires.values()) {
-			wire.deselect();
+		for (List<WireView> wires : WirePanel.this.activeWires.values()) {
+			for (WireView wire: wires) {
+				wire.deselect();
+			}
 		}
 	}
 	
@@ -99,13 +117,15 @@ public class WirePanel extends JPanel {
 	private final Action wireDeletionHandler = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
-			for (WireView wire : WirePanel.this.activeWires.values()) {
-				if (wire.getEnd() != null && wire.isSelected()) {
-					try {
-						wire.getStart().signal.disconnect(wire.getEnd().signal);
-						WirePanel.this.removeWire(wire);
-					} catch (IllegalArgumentException e) {
-						System.out.println("Can not disconnect!" + e.getMessage());
+			for (List<WireView> wires : WirePanel.this.activeWires.values()) {
+				for (WireView wire: wires) {
+					if (wire.getEnd() != null && wire.isSelected()) {
+						try {
+							wire.getStart().signal.disconnect(wire.getEnd().signal);
+							WirePanel.this.removeWire(wire);
+						} catch (IllegalArgumentException e) {
+							System.out.println("Can not disconnect!" + e.getMessage());
+						}
 					}
 				}
 			}
@@ -182,11 +202,20 @@ public class WirePanel extends JPanel {
 			System.out.println("Ending wire on? " + end.signal);
 			
 			try {
-				start.signal.connect(end.signal);
-				this.draggedWire.attatchEnd(end);
-				
-				WirePanel.this.activeWires.put(end, this.draggedWire);
-				WirePanel.this.activeWires.put(start, this.draggedWire);
+				if (start.signal.connect(end.signal)) {
+					this.draggedWire.attatchEnd(end);
+					
+					if (!WirePanel.this.activeWires.containsKey(end)) {
+						WirePanel.this.activeWires.put(end, new LinkedList<WireView>());
+					}
+					if (!WirePanel.this.activeWires.containsKey(start)) {
+						WirePanel.this.activeWires.put(start, new LinkedList<WireView>());
+					}
+					WirePanel.this.activeWires.get(start).add(this.draggedWire);
+					WirePanel.this.activeWires.get(end).add(this.draggedWire);
+				} else {
+					WirePanel.this.removeWire(this.draggedWire);
+				}
 			} catch (IllegalArgumentException e) {
 				System.out.println("Connection could not be made: "+ e.getMessage());
 				WirePanel.this.removeWire(this.draggedWire);
