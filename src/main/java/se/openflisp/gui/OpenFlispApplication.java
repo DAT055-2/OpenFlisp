@@ -55,21 +55,7 @@ public class OpenFlispApplication {
 	public void initialize() {
 		
 		// Add frame icon
-		try {
-			//TODO fix the icon
-			URL url;
-			url = OpenFlispApplication.class.getClassLoader().getResource("Open_Flisp_icon.png");
-			
-			//Somewhere there there is an error
-			Image icon = ImageIO.read(url);
-			frame.setIconImage(icon);
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// TODO add frame icon
 				
 		// Load settings
 		// TODO Load settings
