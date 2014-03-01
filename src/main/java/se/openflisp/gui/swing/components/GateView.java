@@ -20,8 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Insets;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +29,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
+
 
 import se.openflisp.sls.Component;
 import se.openflisp.sls.Input;
@@ -57,13 +55,14 @@ public class GateView extends ComponentView {
 	private JPanel	inputPanel;
 	private	 JPanel	outputPanel;
 	private JLabel	identifier;
-	public List<SignalView>	outputSignals;
-	public List<SignalView>	inputSignals;
+	public List<SignalView> 	outputSignals;
+	public List<SignalView> 	inputSignals;
 
 	/**
 	 * Creates a new gateview given a component
 	 * @param component		component to create a view for
 	 */
+	@SuppressWarnings("static-access")
 	public GateView(Component component) {
 		super(component);
 		setSize(new Dimension(componentSize*4,componentSize));
@@ -87,11 +86,14 @@ public class GateView extends ComponentView {
 			else
 				this.identifier.setText("0");
 		}	
-		else if (component instanceof OrGate) {
-			this.identifier.setText(">=1");
+		else if ( (component instanceof OrGate) || (component instanceof NorGate) ) {
+			this.identifier.setText("\u22651");
 		}
 		else if ( (component instanceof AndGate) || (component instanceof NandGate) ) {
 			this.identifier.setText("&");
+		}
+		else if ( (component instanceof XorGate) || (component instanceof NxorGate) ) {
+			this.identifier.setText("=1");
 		}
 		
 		this.identifier.setOpaque(true);
@@ -138,17 +140,6 @@ public class GateView extends ComponentView {
 		add(inputPanel, BorderLayout.WEST);
 		add(identifier, BorderLayout.CENTER);
 		add(outputPanel, BorderLayout.EAST);
-	}
-
-	/**
-	 * Add additional signal to this gate
-	 * @param signal
-	 */
-	public void addSignal(Signal signal) {
-		if (signal instanceof Output) 
-			this.outputSignals.add(new SignalView(signal));
-		if (signal instanceof Input)
-			this.inputSignals.add(new SignalView(signal));
 	}
 	
 	public JPanel getIdentifierPane() {

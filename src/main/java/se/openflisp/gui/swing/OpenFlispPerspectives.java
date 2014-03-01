@@ -77,7 +77,8 @@ public class OpenFlispPerspectives extends JPanel implements ItemListener {
 		}
         
         //Create combobox for perspectives
-        JComboBox comboBox = new JComboBox(comboBoxItems.toArray());
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+		JComboBox comboBox = new JComboBox(comboBoxItems.toArray());
         
         //Disable editing of combobox
         comboBox.setEditable(false);

@@ -188,6 +188,7 @@ public class ComponentPanel extends JPanel {
 		 */
 		this.notGate.ds.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, new DragGestureListener() {
 			
+			@SuppressWarnings("static-access")
 			@Override
 			public void dragGestureRecognized(DragGestureEvent event) {
 				try {

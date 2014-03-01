@@ -30,27 +30,23 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+
 
 import se.openflisp.sls.event.CircuitListener;
-import se.openflisp.sls.event.ComponentListener;
 import se.openflisp.sls.event.ListenerContext;
-
 import se.openflisp.sls.simulation.Circuit2D;
 import se.openflisp.sls.Component;
-import se.openflisp.sls.Input;
-import se.openflisp.sls.Output;
-import se.openflisp.sls.Signal;
 import	se.openflisp.gui.swing.components.ComponentView;
 
 /**	
@@ -60,13 +56,13 @@ import	se.openflisp.gui.swing.components.ComponentView;
  * @version 1.0
  */
 @SuppressWarnings("serial")
-public class SimulationBoard extends JPanel{
+public class SimulationBoard extends JPanel {
 
 	// For drag and drop support
 	private DropTarget dropTarget;
 
 	// The circuit we are simulating
-	private Circuit2D circuit;
+	public Circuit2D circuit;
 
 	// In order to match component with componentViews
 	private Map<Component, ComponentView> components;
@@ -76,10 +72,10 @@ public class SimulationBoard extends JPanel{
 
 	// A panel containing the background
 	private JPanel backgroundPanel;
-	
-	// Panel containing wires
-	private WirePanel WirePanel;
-	
+
+	// A panel containing wires
+	private WirePanel wirePanel;
+
 	// We need this point when moving components
 	Point point;
 
@@ -144,19 +140,21 @@ public class SimulationBoard extends JPanel{
 		this.componentLayer.setLayout(null);
 		this.componentLayer.setOpaque(false);
 
-		this.backgroundPanel = new BackgroundPanel();
-		this.backgroundPanel.setOpaque(true);
-		
 		this.wirePanel = new WirePanel(this);
 		this.wirePanel.setLayout(null);
 		this.wirePanel.setOpaque(false);
 
+		this.backgroundPanel = new BackgroundPanel();
+		this.backgroundPanel.setOpaque(true);
 
 		// This will add the panels to our layeredPane in order to make a transparent components
 		this.components = new HashMap<Component, ComponentView>();
 		this.add(backgroundPanel, new Integer(0), 0);
 		this.add(wirePanel, new Integer(1), 0);
-		this.add(componentLayer, new Integer(2),0);
+		this.add(componentLayer, new Integer(2),0);		
+
+		this.componentLayer.setFocusable(true);
+		this.componentLayer.requestFocusInWindow();
 
 		// Set a listener on the circuit
 		this.circuit.getEventDelegator().addListener(ListenerContext.SWING,circtuitHandler);
@@ -171,7 +169,7 @@ public class SimulationBoard extends JPanel{
 		component.setOpaque(false);
 		this.componentLayer.add(component);
 		this.components.put(component.component, component);
-		
+
 		for( SignalView view : ((GateView) component).outputSignals) {
 			view.addPropertyChangeListener(wirePanel);
 		}
@@ -179,12 +177,11 @@ public class SimulationBoard extends JPanel{
 		for( SignalView view : ((GateView) component).inputSignals) {
 			view.addPropertyChangeListener(wirePanel);
 		}
-		
+
 		if (component instanceof GateView) {
-			JPanel identifierPanel = ((GateView) component).getIdentifierPane();
 			component.addMouseMotionListener(new MouseMotionAdapter()  {
 
-				
+
 				@Override
 				public void mouseMoved(MouseEvent e) {
 					// TODO Auto-generated method stub
@@ -196,7 +193,7 @@ public class SimulationBoard extends JPanel{
 						Point delta = new Point(mouseevent.getX() - SimulationBoard.this.point.x, 
 								mouseevent.getY() - SimulationBoard.this.point.y );
 						Point curLocation = SimulationBoard.this.circuit.getComponentLocation(((GateView)mouseevent.getSource()).component);
-						
+
 						SimulationBoard.this.circuit.setComponentLocation(((GateView)mouseevent.getSource()).component,
 								new Point(curLocation.x + delta.x, curLocation.y + delta.y));
 					}
@@ -206,7 +203,7 @@ public class SimulationBoard extends JPanel{
 
 				@Override
 				public void mouseClicked(MouseEvent mouseevent) {
-					
+
 				}
 
 				@Override
@@ -239,6 +236,7 @@ public class SimulationBoard extends JPanel{
 		Graphics2D g2 = (Graphics2D) g;
 		this.backgroundPanel.setBounds(0,0,this.getWidth(),this.getHeight());
 		this.componentLayer.setBounds(0,0,this.getWidth(),this.getHeight());
+		this.wirePanel.setBounds(0,0,this.getWidth(),this.getHeight());
 		super.paintComponent(g2);	
 	}
 
@@ -268,7 +266,7 @@ public class SimulationBoard extends JPanel{
 		 */
 		@Override
 		public void onComponentMoved(Component component, Point from, Point to) {
-			SimulationBoard.this.components.get(component).setBounds(to.x,to.y,ComponentView.componentSize*2,ComponentView.componentSize);	
+			SimulationBoard.this.components.get(component).setBounds(to.x,to.y,ComponentView.componentSize*2,ComponentView.componentSize);
 		}
 	};
 
