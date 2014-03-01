@@ -13,11 +13,11 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import se.openflisp.gui.util.KeyEventDelegator;
 import se.openflisp.sls.Input;
 
 @SuppressWarnings("serial")
@@ -26,12 +26,11 @@ public class WirePanel extends JPanel {
 	private Map<SignalView, List<WireView>> activeWires = new HashMap<SignalView, List<WireView>>();
 	
 	public WirePanel() {
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+		KeyEventDelegator.addKeyAction(
+			this, 
 			KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), 
-			KeyEvent.VK_BACK_SPACE
+			this.wireDeletionHandler
 		);
-		this.getActionMap().put(KeyEvent.VK_BACK_SPACE, this.wireDeletionHandler);
-		this.addMouseListener(this.wireDeselectionHandler);
 	}
 	
 	protected void addWire(WireView wire) {
@@ -65,6 +64,7 @@ public class WirePanel extends JPanel {
 	}
 	
 	public void handleComponentRemoved(ComponentView component) {
+		System.out.println(component);
 		for (SignalView signal : component.getInputViews()) {
 			if (this.activeWires.containsKey(signal)) {
 				for (WireView wire : this.activeWires.get(signal)) {
@@ -105,14 +105,6 @@ public class WirePanel extends JPanel {
 			}
 		}
 	}
-	
-	private final MouseAdapter wireDeselectionHandler = new MouseAdapter() {
-		@Override
-		public void mousePressed(MouseEvent evt) {
-			System.out.println("Clicked on empty space. Deselect all wires!");
-			WirePanel.this.deselectAllWires();
-		}
-	};
 	
 	private final Action wireDeletionHandler = new AbstractAction() {
 		@Override

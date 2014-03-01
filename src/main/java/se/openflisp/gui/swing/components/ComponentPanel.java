@@ -193,25 +193,25 @@ public class ComponentPanel extends JPanel {
 			public void dragGestureRecognized(DragGestureEvent event) {
 				try {
 					GateView view = (GateView)getComponentAt(event.getDragOrigin());
-					if (view.component instanceof AndGate)
+					if (view.getComponent() instanceof AndGate)
 						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("AndGate"));
-					else if (view.component instanceof NotGate)
+					else if (view.getComponent() instanceof NotGate)
 						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("NotGate"));
-					else if (view.component instanceof ConstantGate) {
-						if ( ((ConstantGate)view.component).getConstantState() == Signal.State.HIGH)
+					else if (view.getComponent() instanceof ConstantGate) {
+						if ( ((ConstantGate) view.getComponent()).getConstantState() == Signal.State.HIGH)
 							event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("ConstantOneGate"));
 						else
 							event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("ConstantZeroGate"));	
 					} 
-					else if (view.component instanceof NandGate)
+					else if (view.getComponent() instanceof NandGate)
 						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("NandGate"));
-					else if (view.component instanceof OrGate)
+					else if (view.getComponent() instanceof OrGate)
 						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("OrGate"));
-					else if (view.component instanceof NorGate)
+					else if (view.getComponent() instanceof NorGate)
 						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("NorGate"));
-					else if (view.component instanceof XorGate)
+					else if (view.getComponent() instanceof XorGate)
 						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("XorGate"));
-					else if (view.component instanceof NxorGate)
+					else if (view.getComponent() instanceof NxorGate)
 						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("NxorGate"));
 				} catch(Exception e) {
 					e.printStackTrace();	

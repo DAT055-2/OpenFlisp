@@ -32,7 +32,11 @@ import se.openflisp.sls.Component;
  */
 @SuppressWarnings("serial")
 public abstract class ComponentView extends JPanel {
-	public Component component;
+	
+	private boolean selected = false;
+	
+	private final Component component;
+	
 	protected static int componentSize = 50;
 	
 	// We need this in order to make DragAndDrop
@@ -56,5 +60,17 @@ public abstract class ComponentView extends JPanel {
 	
 	public Set<SignalView> getOutputViews() {
 		return null;
+	}
+	
+	public boolean isSelected() {
+		return this.selected;
+	}
+	
+	public void select() {
+		this.selected = true;
+	}
+	
+	public void deselect() {
+		this.selected = false;
 	}
 }

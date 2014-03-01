@@ -29,20 +29,27 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import se.openflisp.sls.event.CircuitListener;
 import se.openflisp.sls.event.ListenerContext;
 import se.openflisp.sls.simulation.Circuit2D;
 import se.openflisp.sls.Component;
 import	se.openflisp.gui.swing.components.ComponentView;
+import se.openflisp.gui.util.KeyEventDelegator;
 
 /**	
  * The Board for simulating gates 
@@ -89,8 +96,8 @@ public class SimulationBoard extends JPanel {
 
 					if (view != null) {
 						// Add the components to circuit and move it
-						SimulationBoard.this.circuit.addComponent(view.component);
-						SimulationBoard.this.circuit.setComponentLocation(view.component, new Point(dropEvent.getLocation().x, dropEvent.getLocation().y));
+						SimulationBoard.this.circuit.addComponent(view.getComponent());
+						SimulationBoard.this.circuit.setComponentLocation(view.getComponent(), new Point(dropEvent.getLocation().x, dropEvent.getLocation().y));
 					}
 				} catch (UnsupportedFlavorException e) {
 					e.printStackTrace();
@@ -128,7 +135,7 @@ public class SimulationBoard extends JPanel {
 		this.circuit.getSimulation().start();
 
 		// Instantiate the componentLayer and set opaque
-		this.componentLayer = new ComponentLayer();
+		this.componentLayer = new JPanel();
 		this.componentLayer.setLayout(null);
 		this.componentLayer.setOpaque(false);
 
@@ -150,7 +157,14 @@ public class SimulationBoard extends JPanel {
 
 		// Set a listener on the circuit
 		this.circuit.getEventDelegator().addListener(ListenerContext.SWING, circtuitHandler);
-
+		
+		this.addMouseListener(this.deselectionHandler);
+		
+		KeyEventDelegator.addKeyAction(
+			this, 
+			KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), 
+			this.componentDeletionHandler
+		);
 	}
 
 	/**
@@ -160,10 +174,15 @@ public class SimulationBoard extends JPanel {
 	public void addComponent(ComponentView component) {
 		component.setOpaque(false);
 		this.componentLayer.add(component);
-		this.components.put(component.component, component);
+		this.components.put(component.getComponent(), component);
 		
 		component.addMouseListener(this.componentMovementHandler);
 		component.addMouseMotionListener(this.componentMovementHandler);
+	}
+	
+	public void removeComponent(ComponentView component) {
+		this.components.remove(component.getComponent());
+		this.componentLayer.remove(component);
 	}
 
 	/**
@@ -197,6 +216,9 @@ public class SimulationBoard extends JPanel {
 		@Override
 		public void onComponentRemoved(Component component) {
 			SimulationBoard.this.wirePanel.handleComponentRemoved(SimulationBoard.this.components.get(component));
+			SimulationBoard.this.removeComponent(SimulationBoard.this.components.get(component));
+			SimulationBoard.this.repaint();
+			SimulationBoard.this.revalidate();
 		}
 
 		/**
@@ -235,15 +257,18 @@ public class SimulationBoard extends JPanel {
 			} 
 		}
 	}
-
-	public class ComponentLayer extends JPanel {
-		@Override
-		public void paintComponent(Graphics g) {
-			Graphics2D g2 = (Graphics2D) g;
-			super.paintComponent(g2);
-		}
-	}
 	
+	private final MouseAdapter deselectionHandler = new MouseAdapter() {
+		@Override
+		public void mousePressed(MouseEvent evt) {
+			System.out.println("Clicked on empty space. Deselect all components and wires!");
+			for (Entry<Component, ComponentView> entry : SimulationBoard.this.components.entrySet()) {
+				entry.getValue().deselect();
+			}
+			SimulationBoard.this.wirePanel.deselectAllWires();
+		}
+	};
+
 	private final MouseAdapter componentMovementHandler = new MouseAdapter()  {
 		private Point point;
 		private ComponentView draggedComponent;
@@ -272,6 +297,7 @@ public class SimulationBoard extends JPanel {
 				System.out.println("Component pressed: " + evt);
 				
 				this.draggedComponent = (ComponentView) evt.getComponent();
+				this.draggedComponent.select();
 				this.point = evt.getPoint();
 			}
 		}
@@ -281,4 +307,17 @@ public class SimulationBoard extends JPanel {
 			this.draggedComponent = null;
 		}
 	};
+	
+	private final Action componentDeletionHandler = new AbstractAction() {
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			for (Entry<Component, ComponentView> entry : SimulationBoard.this.components.entrySet()) {
+				if (entry.getValue().isSelected()) {
+					System.out.println("Removing " + entry.getKey());
+					SimulationBoard.this.circuit.removeComponent(entry.getKey());
+				}
+			}
+		}
+	};
+	
 }

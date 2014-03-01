@@ -82,7 +82,7 @@ public class GateView extends ComponentView {
 			this.identifier.setText("1");
 		}		
 		else if (component  instanceof ConstantGate) {
-			if (((ConstantGate) this.component).getConstantState() == Signal.State.HIGH) 
+			if (((ConstantGate) this.getComponent()).getConstantState() == Signal.State.HIGH) 
 				this.identifier.setText("1");
 			else
 				this.identifier.setText("0");
@@ -142,11 +142,6 @@ public class GateView extends ComponentView {
 		add(identifier, BorderLayout.CENTER);
 		add(outputPanel, BorderLayout.EAST);
 	}
-	/*
-	public JPanel getIdentifierPane() {
-		return this.identifierPanel;
-	}
-	*/
 	
 	public Set<SignalView> getInputViews() {
 		return new HashSet<SignalView>(this.inputSignals);
@@ -158,5 +153,15 @@ public class GateView extends ComponentView {
 	
 	public JComponent getBodyComponent() {
 		return this.identifier;
+	}
+	
+	public void select() {
+		super.select();
+		this.identifier.setBorder(BorderFactory.createLineBorder(Color.orange));
+	}
+	
+	public void deselect() {
+		super.deselect();
+		this.identifier.setBorder(BorderFactory.createLineBorder(Color.black));
 	}
 }
