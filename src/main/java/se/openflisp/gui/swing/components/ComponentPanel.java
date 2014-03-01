@@ -84,10 +84,10 @@ public class ComponentPanel extends JPanel {
 		this.setLayout(layout);
 		
 		//Initiate the ComponentViews
-		gate = new ConstantGate("ConstantGate", Signal.State.LOW);
+		gate = new ConstantGate("ConstantOneGate", Signal.State.LOW);
 		constantGateLOW = new GateView(gate);
 		
-		gate = new ConstantGate("ConstantGate", Signal.State.HIGH);
+		gate = new ConstantGate("ConstantZeroGate", Signal.State.HIGH);
 		constantGateHIGH = new GateView(gate);
 		
 		gate = new AndGate("Andgate");
