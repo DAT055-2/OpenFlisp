@@ -7,9 +7,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -92,21 +96,34 @@ public class WirePanel extends JPanel {
 	}
 	
 	public void handleComponentRemoved(ComponentView component) {
-		System.out.println(component);
+		Set<WireView> wires = new HashSet<WireView>();
 		for (SignalView signal : component.getInputViews()) {
 			if (this.activeWires.containsKey(signal)) {
 				for (WireView wire : this.activeWires.get(signal)) {
-					this.removeWire(wire);
+					wires.add(wire);
 				}
 			}
 		}
 		for (SignalView signal : component.getOutputViews()) {
 			if (this.activeWires.containsKey(signal)) {
 				for (WireView wire : this.activeWires.get(signal)) {
-					this.removeWire(wire);
+					wires.add(wire);
 				}
 			}
 		}
+		for (Entry<SignalView, List<WireView>> entry : this.activeWires.entrySet()) {
+			Iterator<WireView> it = entry.getValue().iterator();
+			while (it.hasNext()) {
+				WireView w = it.next();
+				if (wires.contains(w)) {
+					this.remove(w);
+					it.remove();
+					
+				}
+			}
+		}
+		this.repaint();
+		this.revalidate();
 	}
 	
 	public void handleComponentMoved(ComponentView component) {
