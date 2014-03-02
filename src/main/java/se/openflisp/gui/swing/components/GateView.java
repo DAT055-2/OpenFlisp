@@ -20,9 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -40,7 +38,7 @@ import se.openflisp.gui.swing.components.ComponentView;
 import se.openflisp.sls.component.*;
 
 /**	
- * A Viewier for gates
+ * GateView, a view for all Gate components.
  * 
  * @author Daniel Svensson <daniel@dsit.se>
  * @version 1.0
@@ -49,52 +47,57 @@ import se.openflisp.sls.component.*;
 public class GateView extends ComponentView {
 	
 	/**
-	 * In order to make the input and output panels transparent we need to put them in diffrent jpanels
+	 * All SignalView objects corresponding to the Components Outputs.
 	 */
-	private JPanel identifierPanel;
-	private JPanel inputPanel;
-	private	JPanel outputPanel;
-	private JLabel identifier;
+	private Set<SignalView> outputSignals;
 	
-	private List<SignalView> 	outputSignals;
-	private List<SignalView> 	inputSignals;
+	/**
+	 * All SignalView objects corresponding to the Components Inputs.
+	 */
+	private Set<SignalView> inputSignals;
+	
+	/**
+	 * Internal panels containing SignalViews and a JLabel.
+	 */
+	private JPanel identifierPanel, inputPanel, outputPanel;
+	
+	/**
+	 * Major part of this ComponentView which is displayed as a white box with
+	 * an gate symbol in the middle.
+	 */
+	private JLabel identifier;
 
 	/**
-	 * Creates a new gateview given a component
-	 * @param component		component to create a view for
+	 * Creates a GateView.
+	 * 
+	 * @param component		the component model to display
 	 */
-	@SuppressWarnings("static-access")
 	public GateView(Component component) {
 		super(component);
 		
-		setSize(new Dimension(componentSize*4,componentSize));
-		this.setPreferredSize(new Dimension(componentSize*2,componentSize));
-		this.setMaximumSize(new Dimension(componentSize*2,componentSize));
-		this.setMinimumSize(new Dimension(componentSize*2,componentSize));
+		this.setSize(new Dimension(componentSize * 4, componentSize));
+		this.setPreferredSize(new Dimension(componentSize * 2, componentSize));
+		this.setMaximumSize(new Dimension(componentSize * 2, componentSize));
+		this.setMinimumSize(new Dimension(componentSize * 2, componentSize));
 		
-		setLayout(new BorderLayout());
+		this.setLayout(new BorderLayout());
 		this.identifier = new JLabel("", JLabel.CENTER);
-		this.identifierPanel = new JPanel();
-		this.identifierPanel.setLayout(new FlowLayout());
+		this.identifierPanel = new JPanel(new FlowLayout());
 		this.identifierPanel.add(identifier);
 		
-		if (component instanceof NotGate){
+		if (component instanceof NotGate) {
 			this.identifier.setText("1");
-		}		
-		else if (component instanceof ConstantGate) {
+		} else if (component instanceof ConstantGate) {
 			if (((ConstantGate) this.getComponent()).getConstantState() == Signal.State.HIGH) {
 				this.identifier.setText("1");
 			} else {
 				this.identifier.setText("0");
 			}
-		}	
-		else if ( (component instanceof OrGate) || (component instanceof NorGate) ) {
+		} else if ((component instanceof OrGate) || (component instanceof NorGate)) {
 			this.identifier.setText("\u22651");
-		}
-		else if ( (component instanceof AndGate) || (component instanceof NandGate) ) {
+		} else if ((component instanceof AndGate) || (component instanceof NandGate)) {
 			this.identifier.setText("&");
-		}
-		else if ( (component instanceof XorGate) || (component instanceof NxorGate) ) {
+		} else if ((component instanceof XorGate) || (component instanceof NxorGate)) {
 			this.identifier.setText("=1");
 		}
 		
@@ -105,8 +108,8 @@ public class GateView extends ComponentView {
 		this.identifier.setMaximumSize(new Dimension(componentSize, componentSize));
 		this.identifier.setMinimumSize(new Dimension(componentSize, componentSize));
 		
-		this.inputSignals = new ArrayList<SignalView>();
-		this.outputSignals = new ArrayList<SignalView>();
+		this.inputSignals = new HashSet<SignalView>();
+		this.outputSignals = new HashSet<SignalView>();
 		
 		this.inputPanel = new JPanel();
 		this.inputPanel.setLayout(new BoxLayout(this.inputPanel, BoxLayout.Y_AXIS));
@@ -124,10 +127,9 @@ public class GateView extends ComponentView {
 		add(identifier, BorderLayout.CENTER);
 		add(outputPanel, BorderLayout.EAST);
 		
-		
 		for(Output output : component.getOutputs()) {
 			SignalView out = new SignalView(this, output);
-			out.setMaximumSize(out.btnSize);
+			out.setMaximumSize(SignalView.btnSize);
 			this.outputSignals.add(out);
 			this.outputPanel.add( Box.createVerticalGlue() );
 			this.outputPanel.add(out);
@@ -136,7 +138,7 @@ public class GateView extends ComponentView {
 		
 		for(Input input : component.getInputs()) {
 			SignalView in = new SignalView(this, input);
-			in.setMaximumSize(in.btnSize);
+			in.setMaximumSize(SignalView.btnSize);
 			this.inputSignals.add(in);
 			this.inputPanel.add( Box.createVerticalGlue() );
 			
@@ -145,28 +147,52 @@ public class GateView extends ComponentView {
 		}		
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Set<SignalView> getInputViews() {
 		return new HashSet<SignalView>(this.inputSignals);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Set<SignalView> getOutputViews() {
 		return new HashSet<SignalView>(this.outputSignals);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public JComponent getBodyComponent() {
 		return this.identifier;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void select() {
 		super.select();
 		this.identifier.setBorder(BorderFactory.createLineBorder(Color.orange));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void deselect() {
 		super.deselect();
 		this.identifier.setBorder(BorderFactory.createLineBorder(Color.black));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SignalView getSignalView(Signal signal) {
 		for (SignalView view : this.getInputViews()) {
 			if (view.signal == signal) {
@@ -181,6 +207,10 @@ public class GateView extends ComponentView {
 		return null;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SignalView createSignalView(Signal signal) {
 		SignalView view = new SignalView(this, signal);
 		view.setMaximumSize(SignalView.btnSize);

@@ -16,7 +16,6 @@
  */
 package se.openflisp.gui.swing.components;
 
-import java.awt.dnd.DragSource;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -26,7 +25,7 @@ import se.openflisp.sls.Component;
 import se.openflisp.sls.Signal;
 
 /**	
- * Basic object for viewing components, will make more sense when we have additional components
+ * A view for a logical gate Component.
  * 
  * @author Daniel Svensson <daniel@dsit.se>
  * @version 1.0
@@ -34,43 +33,97 @@ import se.openflisp.sls.Signal;
 @SuppressWarnings("serial")
 public abstract class ComponentView extends JPanel {
 	
-	private boolean selected = false;
-	
+	/**
+	 * Component model that is being displayed.
+	 */
 	private final Component component;
 	
+	/**
+	 * If the Component is selected, for deletion or movement.
+	 */
+	private boolean selected = false;
+	
+	/**
+	 * Constant for how big the Component should be, in pixels.
+	 */
 	protected static int componentSize = 50;
 	
-	// We need this in order to make DragAndDrop
-	public DragSource ds = DragSource.getDefaultDragSource();
-	
+	/**
+	 * Creates a ComponentView from a Component model.
+	 * 
+	 * @param component		component model to display
+	 */
 	public ComponentView(Component component) {
 		this.component = component;
 	}
 	
+	/**
+	 * Gets the Component model for the view.
+	 * 
+	 * @return the Component model
+	 */
 	public Component getComponent() {
 		return this.component;
 	}
 	
+	/**
+	 * Checks if the Component is selected.
+	 * 
+	 * @return true if the component is selected, false otherwise
+	 */
 	public boolean isSelected() {
 		return this.selected;
 	}
 	
+	/**
+	 * Selects this component. If already selected nothing happens.
+	 */
 	public void select() {
 		this.selected = true;
 	}
 	
+	/**
+	 * Deselects this component. If not selected nothing happens.
+	 */
 	public void deselect() {
 		this.selected = false;
 	}
 	
+	/**
+	 * Gets this components major body component. Which takes up most space and should
+	 * react to eventual dragging events.
+	 * 
+	 * @return major internal JComponent
+	 */
 	public abstract JComponent getBodyComponent();
 	
+	/**
+	 * Gets all SignalViews for inputs on this Component.
+	 * 
+	 * @return unmodifiable set of SignalViews for the inputs
+	 */
 	public abstract Set<SignalView> getInputViews();
 	
+	/**
+	 * Gets all SignalViews for outputs on this Component.
+	 * 
+	 * @return unmodifiable set of SignalViews for the outputs
+	 */
 	public abstract Set<SignalView> getOutputViews();
 	
+	/**
+	 * Gets the corresponding SignalView for a given Signal model.
+	 * 
+	 * @param signal	signal model 
+	 * @return a SignalView corresponding to a Signal model
+	 */
 	public abstract SignalView getSignalView(Signal signal);
 	
+	/**
+	 * Creates a new SignalView for a given Signal model.
+	 * 
+	 * @param signal	signal model
+	 * @return a new SignalView corresponding to a Signal model
+	 */
 	public abstract SignalView createSignalView(Signal signal);
-	
 }
