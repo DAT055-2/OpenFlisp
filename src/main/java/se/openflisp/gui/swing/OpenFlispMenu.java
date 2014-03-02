@@ -16,7 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import se.openflisp.gui.perspectives.SlsPerspective;
-import se.openflisp.gui.swing.components.SimulationBoard;
 import se.openflisp.sls.io.CircuitLegacyReader;
 import se.openflisp.sls.simulation.Circuit2D;
 
@@ -110,14 +109,23 @@ public class OpenFlispMenu implements ActionListener {
 					sls.getSimulationBoard().switchCircuit(circuit);
 	            }
 			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(
+					null,
+					"Kunde inte hitta den valda filen", "Filen kunde inte hittas",
+					JOptionPane.ERROR_MESSAGE
+				);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(
+					null,
+					e1.getMessage(), "Läsfel",
+					JOptionPane.ERROR_MESSAGE
+				);
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(
+					null,
+					"Filen kunde inte läsas, " + e1.getMessage(), "Felaktigt filformat",
+					JOptionPane.ERROR_MESSAGE
+				);
 			} finally {
 				try {
 					if (reader != null) {
