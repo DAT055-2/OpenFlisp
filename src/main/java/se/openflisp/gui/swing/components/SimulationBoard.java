@@ -30,6 +30,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -43,6 +44,7 @@ import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 
 import se.openflisp.sls.event.CircuitListener;
 import se.openflisp.sls.event.ListenerContext;
@@ -64,7 +66,7 @@ public class SimulationBoard extends JPanel {
 	private DropTarget dropTarget;
 
 	// The circuit we are simulating
-	public Circuit2D circuit;
+	private Circuit2D circuit;
 
 	// In order to match component with componentViews
 	private Map<Component, ComponentView> components;
@@ -130,16 +132,12 @@ public class SimulationBoard extends JPanel {
 		// For drag and drop support
 		this.setDropTarget(dropTarget);
 
-		// Create the circuit and start simulation
-		this.circuit = new Circuit2D();
-		this.circuit.getSimulation().start();
-
 		// Instantiate the componentLayer and set opaque
 		this.componentLayer = new JPanel();
 		this.componentLayer.setLayout(null);
 		this.componentLayer.setOpaque(false);
 
-		this.wirePanel = new WirePanel();
+		this.wirePanel = new WirePanel(this);
 		this.wirePanel.setLayout(null);
 		this.wirePanel.setOpaque(false);
 
@@ -154,9 +152,6 @@ public class SimulationBoard extends JPanel {
 
 		this.componentLayer.setFocusable(true);
 		this.componentLayer.requestFocusInWindow();
-
-		// Set a listener on the circuit
-		this.circuit.getEventDelegator().addListener(ListenerContext.SWING, circtuitHandler);
 		
 		this.addMouseListener(this.deselectionHandler);
 		
@@ -165,14 +160,62 @@ public class SimulationBoard extends JPanel {
 			KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), 
 			this.componentDeletionHandler
 		);
+		
+		// Create the circuit and start simulation
+		this.circuit = new Circuit2D();
+		this.circuit.getSimulation().start();
+		
+		// Set a listener on the circuit
+		this.circuit.getEventDelegator().addListener(ListenerContext.SWING, circtuitHandler);		
 	}
 
+	public void switchCircuit(Circuit2D circuit) {
+		this.clearBoard();
+		
+		this.circuit.getSimulation().interrupt();
+		this.circuit = circuit;
+		this.circuit.getSimulation().start();
+		this.circuit.getEventDelegator().addListener(ListenerContext.SWING, circtuitHandler);
+		
+		for (Component component : SimulationBoard.this.circuit.getComponents()) {
+			SimulationBoard.this.addComponent(ComponentFactory.createGateFromComponent(component));
+		}
+		
+		SimulationBoard.this.repaint();
+		SimulationBoard.this.revalidate();
+		
+		Timer timer = new Timer(200, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (Component component : SimulationBoard.this.circuit.getComponents()) {
+					SimulationBoard.this.wirePanel.handleComponentAdded(SimulationBoard.this.components.get(component));
+				}
+				
+				SimulationBoard.this.repaint();
+				SimulationBoard.this.revalidate();
+			}
+		});
+		timer.setRepeats(false);
+		timer.start();
+	}
+	
 	/**
 	 * Adds a component to the simulation board
 	 * @param component		the component to be added
 	 */
 	public void addComponent(ComponentView component) {
 		component.setOpaque(false);
+		
+		// TODO: Make component responsible for this?
+		Point position = this.circuit.getComponentLocation(component.getComponent());
+		System.out.println("Adding component at: " + position);
+		component.setBounds(
+			position.x,
+			position.y, 
+			ComponentView.componentSize * 2, 
+			ComponentView.componentSize
+		);
+		
 		this.componentLayer.add(component);
 		this.components.put(component.getComponent(), component);
 		
@@ -189,8 +232,14 @@ public class SimulationBoard extends JPanel {
 		for (Entry<Component, ComponentView> entry : SimulationBoard.this.components.entrySet()) {
 			SimulationBoard.this.circuit.removeComponent(entry.getKey());
 		}
+		SimulationBoard.this.repaint();
+		SimulationBoard.this.revalidate();
 	}
 
+	public ComponentView getComponentView(Component component) {
+		return this.components.get(component);
+	}
+	
 	/**
 	 * We need to override the painting
 	 */
@@ -213,7 +262,7 @@ public class SimulationBoard extends JPanel {
 		 */
 		@Override
 		public void onComponentAdded(Component component) {
-			addComponent(ComponentFactory.createGateFromComponent(component));
+			SimulationBoard.this.addComponent(ComponentFactory.createGateFromComponent(component));
 			SimulationBoard.this.wirePanel.handleComponentAdded(SimulationBoard.this.components.get(component));
 			SimulationBoard.this.repaint();
 			SimulationBoard.this.revalidate();
@@ -221,6 +270,7 @@ public class SimulationBoard extends JPanel {
 
 		@Override
 		public void onComponentRemoved(Component component) {
+			
 			SimulationBoard.this.wirePanel.handleComponentRemoved(SimulationBoard.this.components.get(component));
 			SimulationBoard.this.removeComponent(SimulationBoard.this.components.get(component));
 			SimulationBoard.this.repaint();
@@ -281,7 +331,7 @@ public class SimulationBoard extends JPanel {
 		
 		@Override
 		public void mouseDragged(MouseEvent evt) {
-			if (this.draggedComponent != null) {
+			if (this.draggedComponent != null && this.point != null) {
 				Point componentLocation = SimulationBoard.this.circuit.getComponentLocation(
 					this.draggedComponent.getComponent()
 				);
@@ -325,5 +375,4 @@ public class SimulationBoard extends JPanel {
 			}
 		}
 	};
-	
 }

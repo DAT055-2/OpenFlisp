@@ -16,12 +16,6 @@
  */
 package se.openflisp.gui;
 
-import java.awt.Image;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 import se.openflisp.gui.swing.OpenFlispFrame;

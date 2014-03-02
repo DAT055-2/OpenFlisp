@@ -18,6 +18,7 @@ package se.openflisp.gui.perspectives;
 
 import se.openflisp.gui.swing.components.ComponentPanel;
 import se.openflisp.gui.swing.components.SimulationBoard;
+import se.openflisp.sls.simulation.Circuit2D;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.DefaultDockable;
 

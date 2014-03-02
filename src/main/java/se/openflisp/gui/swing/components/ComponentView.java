@@ -23,6 +23,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import se.openflisp.sls.Component;
+import se.openflisp.sls.Signal;
 
 /**	
  * Basic object for viewing components, will make more sense when we have additional components
@@ -67,5 +68,7 @@ public abstract class ComponentView extends JPanel {
 	public abstract Set<SignalView> getInputViews();
 	
 	public abstract Set<SignalView> getOutputViews();
+	
+	public abstract SignalView getSignalView(Signal signal);
 	
 }

@@ -3,7 +3,12 @@ package se.openflisp.gui.swing;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.ParseException;
 
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -11,6 +16,9 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import se.openflisp.gui.perspectives.SlsPerspective;
+import se.openflisp.gui.swing.components.SimulationBoard;
+import se.openflisp.sls.io.CircuitLegacyReader;
+import se.openflisp.sls.simulation.Circuit2D;
 
 /**
  * Creates the menubar and its items
@@ -25,7 +33,7 @@ public class OpenFlispMenu implements ActionListener {
 	
 	private JMenuBar menuBar;
 
-	private JMenuItem clearBoard, quitApplication, openHelp;
+	private JMenuItem importBoard, clearBoard, quitApplication, openHelp;
 	
 	public OpenFlispMenu(OpenFlispFrame frame) {
 		this.frame = frame;
@@ -33,6 +41,12 @@ public class OpenFlispMenu implements ActionListener {
 	}
 
 	protected void initilize()	{
+		this.importBoard = new JMenuItem("Importera koppling");
+		this.importBoard.addActionListener(this);
+		this.importBoard.setAccelerator(KeyStroke.getKeyStroke(
+			KeyEvent.VK_O, ActionEvent.CTRL_MASK
+		));
+		
 		this.clearBoard = new JMenuItem("Rensa kopplingsbordet");
 		this.clearBoard.addActionListener(this);
 		this.clearBoard.setAccelerator(KeyStroke.getKeyStroke(
@@ -52,6 +66,7 @@ public class OpenFlispMenu implements ActionListener {
 		));
 		
 		JMenu archiveMenu = new JMenu("Arkiv");	
+		archiveMenu.add(this.importBoard);
 		archiveMenu.add(this.clearBoard);
 		archiveMenu.add(this.quitApplication);
 		
@@ -74,9 +89,43 @@ public class OpenFlispMenu implements ActionListener {
 				"Detta är en prototyp. \nVersion: 2014-01-31\nAv: Johan & Fiona","OpenFlisp",
 				JOptionPane.INFORMATION_MESSAGE
 			);
-		} else if (e.getSource() == this.clearBoard)	{
+		} else if (e.getSource() == this.clearBoard) {
 			SlsPerspective sls = (SlsPerspective) this.frame.getPerspectives().getPerspective(SlsPerspective.IDENTIFIER);
 			sls.getSimulationBoard().clearBoard();
+		} else if (e.getSource() == this.importBoard) {
+			SlsPerspective sls = (SlsPerspective) this.frame.getPerspectives().getPerspective(SlsPerspective.IDENTIFIER);
+			CircuitLegacyReader reader = null;
+			try {
+				JFileChooser fc = new JFileChooser();
+	            if (fc.showOpenDialog(this.frame) == JFileChooser.APPROVE_OPTION) {
+	            	
+	            	System.out.println(fc.getSelectedFile());
+	            	
+					reader = new CircuitLegacyReader(new FileReader(fc.getSelectedFile()));
+					
+					Circuit2D circuit = reader.readCircuit();
+					
+					System.out.println("Found " + circuit.getComponents().size() + " components.");
+					
+					sls.getSimulationBoard().switchCircuit(circuit);
+	            }
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} finally {
+				try {
+					if (reader != null) {
+						reader.close();
+					}
+				} catch (IOException e1) {}
+			}
+			
 		}
 	}
 }

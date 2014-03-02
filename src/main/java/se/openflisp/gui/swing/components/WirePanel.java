@@ -1,6 +1,5 @@
 package se.openflisp.gui.swing.components;
 
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -13,19 +12,24 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import se.openflisp.gui.util.KeyEventDelegator;
 import se.openflisp.sls.Input;
+import se.openflisp.sls.Output;
 
 @SuppressWarnings("serial")
 public class WirePanel extends JPanel {
 
+	private final SimulationBoard simulationBoard;
+	
 	private Map<SignalView, List<WireView>> activeWires = new HashMap<SignalView, List<WireView>>();
 	
-	public WirePanel() {
+	public WirePanel(SimulationBoard simulationBoard) {
+		this.simulationBoard = simulationBoard;
 		KeyEventDelegator.addKeyAction(
 			this, 
 			KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), 
@@ -54,6 +58,25 @@ public class WirePanel extends JPanel {
 	
 	public void handleComponentAdded(ComponentView component) {
 		for (SignalView signal : component.getInputViews()) {
+			if (signal.signal.isConnected()) {
+				WireView wire = new WireView(this, signal);
+				
+				Output output = ((Input) signal.signal).getConnection();
+				
+				ComponentView componentView = this.simulationBoard.getComponentView(output.getOwner());
+				SignalView end = componentView.getSignalView(output);
+				wire.attatchEnd(end);
+				
+				if (!this.activeWires.containsKey(signal)) {
+					this.activeWires.put(signal, new LinkedList<WireView>());
+				}
+				this.activeWires.get(signal).add(wire);
+				if (!this.activeWires.containsKey(end)) {
+					this.activeWires.put(end, new LinkedList<WireView>());
+				}
+				this.activeWires.get(end).add(wire);
+				this.addWire(wire);
+			}
 			signal.addMouseListener(this.wireCreationHandler);
 			signal.addMouseMotionListener(this.wireCreationHandler);
 		}
@@ -61,6 +84,7 @@ public class WirePanel extends JPanel {
 			signal.addMouseListener(this.wireCreationHandler);
 			signal.addMouseMotionListener(this.wireCreationHandler);
 		}
+		this.handleComponentMoved(component);
 	}
 	
 	public void handleComponentRemoved(ComponentView component) {
@@ -159,7 +183,7 @@ public class WirePanel extends JPanel {
 				return;
 			}
 			Point point = SwingUtilities.convertPoint(
-				(Component) evt.getSource(),
+				(JComponent) evt.getSource(),
 				evt.getX(),
 				evt.getY(), 
 				WirePanel.this

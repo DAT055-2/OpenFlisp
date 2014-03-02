@@ -144,21 +144,19 @@ public class SignalView extends JButton {
 
 	public Point getPosition(Component context) {
 		if (this.signal instanceof Output) {
-
 			return SwingUtilities.convertPoint(
-					this.getParent(),
-					this.getLocation().x + (btnSize.width),
-					this.getLocation().y + (arcLength) / 2,
-					context
-					);
+				this.getParent(),
+				this.getX() + (btnSize.width),
+				this.getY() + (arcLength) / 2,
+				context
+			);
 		} else {
 			return SwingUtilities.convertPoint(
-					this.getParent(),
-					this.getLocation().x,
-					this.getLocation().y + (SignalView.arcLength) / 2,
-					context
-					);
+				this.getParent(),
+				this.getLocation().x,
+				this.getLocation().y + (SignalView.arcLength) / 2,
+				context
+			);
 		}
-
 	}
 }

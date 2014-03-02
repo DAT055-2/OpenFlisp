@@ -66,11 +66,11 @@ public class GateView extends ComponentView {
 	@SuppressWarnings("static-access")
 	public GateView(Component component) {
 		super(component);
+		
 		setSize(new Dimension(componentSize*4,componentSize));
 		this.setPreferredSize(new Dimension(componentSize*2,componentSize));
 		this.setMaximumSize(new Dimension(componentSize*2,componentSize));
 		this.setMinimumSize(new Dimension(componentSize*2,componentSize));
-		
 		
 		setLayout(new BorderLayout());
 		this.identifier = new JLabel("", JLabel.CENTER);
@@ -117,30 +117,32 @@ public class GateView extends ComponentView {
 		this.inputPanel.setPreferredSize(new Dimension(componentSize/2, componentSize));
 		this.outputPanel.setPreferredSize(new Dimension(componentSize/2,componentSize));
 		
-		for(Output output : component.getOutputs()) {
-			SignalView out = new SignalView(output);
-			this.outputSignals.add(out);
-			this.outputPanel.add( Box.createVerticalGlue() );
-			out.setMaximumSize(out.btnSize);
-			this.outputPanel.add(out);
-			this.outputPanel.add( Box.createVerticalGlue() );
-		}
-		
-		for(Input input : component.getInputs()) {
-			SignalView in = new SignalView(input);
-			this.inputSignals.add(in);
-			this.inputPanel.add( Box.createVerticalGlue() );
-			in.setMaximumSize(in.btnSize);
-			this.inputPanel.add(in);
-			this.inputPanel.add( Box.createVerticalGlue() );
-		}
-		
 		this.inputPanel.setOpaque(false);
 		this.outputPanel.setOpaque(false);
 		
 		add(inputPanel, BorderLayout.WEST);
 		add(identifier, BorderLayout.CENTER);
 		add(outputPanel, BorderLayout.EAST);
+		
+		
+		for(Output output : component.getOutputs()) {
+			SignalView out = new SignalView(output);
+			out.setMaximumSize(out.btnSize);
+			this.outputSignals.add(out);
+			this.outputPanel.add( Box.createVerticalGlue() );
+			this.outputPanel.add(out);
+			this.outputPanel.add( Box.createVerticalGlue() );
+		}
+		
+		for(Input input : component.getInputs()) {
+			SignalView in = new SignalView(input);
+			in.setMaximumSize(in.btnSize);
+			this.inputSignals.add(in);
+			this.inputPanel.add( Box.createVerticalGlue() );
+			
+			this.inputPanel.add(in);
+			this.inputPanel.add( Box.createVerticalGlue() );
+		}		
 	}
 	
 	public Set<SignalView> getInputViews() {
@@ -163,5 +165,19 @@ public class GateView extends ComponentView {
 	public void deselect() {
 		super.deselect();
 		this.identifier.setBorder(BorderFactory.createLineBorder(Color.black));
+	}
+	
+	public SignalView getSignalView(Signal signal) {
+		for (SignalView view : this.getInputViews()) {
+			if (view.signal == signal) {
+				return view;
+			}
+		}
+		for (SignalView view : this.getOutputViews()) {
+			if (view.signal == signal) {
+				return view;
+			}
+		}
+		return null;
 	}
 }
