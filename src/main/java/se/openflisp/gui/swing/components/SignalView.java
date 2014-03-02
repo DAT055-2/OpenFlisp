@@ -40,7 +40,7 @@ import se.openflisp.sls.event.ComponentAdapter;
 import se.openflisp.sls.event.ListenerContext;
 
 /**	
- * A basic model for viewing signals
+ * A view for the signal on a ComponentView.
  * 
  * @author Daniel Svensson <daniel@dsit.se>
  * @version 1.0
@@ -48,24 +48,40 @@ import se.openflisp.sls.event.ListenerContext;
 @SuppressWarnings("serial")
 public class SignalView extends JButton {
 
-	//The signal we make a view for
-	public Signal signal;
-
-	//The size of the signal-circle
-	protected static int arcLength = ComponentView.componentSize/5;
-
-	//The size of the whole signal object
-	public static Dimension btnSize = new Dimension(ComponentView.componentSize/2,arcLength); 
-
-	//We need this to determine if a x.y coordinate is whithin this button
+	/**
+	 * Signal model to display.
+	 */
+	public final Signal signal;
+	
+	/**
+	 * The ComponentView that this SignalView is within.
+	 */
+	private final ComponentView componentView;
+	
+	/**
+	 * Shape of the clickable JButton signal.
+	 */
 	private Shape shape;
 	
-	private ComponentView componentView;
+	/**
+	 * Size of the circle used to display Signal states.
+	 */
+	protected static int arcLength = ComponentView.componentSize / 5;
 
-	public se.openflisp.sls.Component component;
+	
+	/**
+	 * Size of the entire SignalView including circle and stick.
+	 */
+	public static Dimension btnSize = new Dimension(ComponentView.componentSize/2,arcLength); 
 
+
+	/**
+	 * Creates a new SignalView.
+	 * 
+	 * @param componentView		the parent ComponentView that created the SignalView
+	 * @param signal			the signal model to display
+	 */
 	public SignalView(ComponentView componentView, Signal signal) {
-		this.component = signal.getOwner();
 		this.componentView = componentView;
 		this.setPreferredSize(btnSize);
 		this.signal = signal;
@@ -81,15 +97,61 @@ public class SignalView extends JButton {
 		});
 	}
 
+	/**
+	 * Gets the parent ComponentView that this SignalView is in.
+	 * 
+	 * @return the parent ComponentView
+	 */
 	public ComponentView getComponentView() {
 		return this.componentView;
 	}
 	
 	/**
-	 * Custom paint method so our button looks like a signal
+	 * {@inheritDoc}
 	 */
+	@Override
+	public boolean contains(int x, int y) {
+		if (this.shape == null || !this.shape.getBounds().equals(this.getBounds())) {
+			if (this.signal instanceof Input) {
+				this.shape = new Float(0, 0, arcLength - 1, arcLength - 1);
+			} else {
+				this.shape = new Float(btnSize.width - (arcLength + 1), 0, arcLength - 1 , arcLength - 1);
+			}
+		}
+		return this.shape.contains(x, y);
+	}
+
+	/**
+	 * Gets the current position of the Signal circle in the context of another AWT Component.
+	 * 
+	 * @param context		in what context the position should be given in
+	 * @return a Point containing the x,y-coordinates for the Signal circle
+	 */
+	public Point getPosition(Component context) {
+		if (this.signal instanceof Output) {
+			return SwingUtilities.convertPoint(
+				this.getParent(),
+				this.getX() + (btnSize.width),
+				this.getY() + (arcLength) / 2,
+				context
+			);
+		} else {
+			return SwingUtilities.convertPoint(
+				this.getParent(),
+				this.getLocation().x,
+				this.getLocation().y + (SignalView.arcLength) / 2,
+				context
+			);
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected void paintComponent(Graphics g) {
-		if (getModel().isArmed() || signal.getState() == Signal.State.HIGH) {
+		Graphics2D g2 = (Graphics2D) g;
+		if (signal.getState() == Signal.State.HIGH) {
 			g.setColor(Color.BLUE);
 		} else if (signal.getState() == Signal.State.FLOATING) {
 			g.setColor(Color.RED);
@@ -101,13 +163,7 @@ public class SignalView extends JButton {
 		} else {
 			g.fillOval((btnSize.width - (arcLength+1)),0, arcLength-1, arcLength-1);
 		}
-	}
-
-	/**
-	 * Paints the border around the signal
-	 */
-	protected void paintBorder(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
+		
 		g2.setColor(getForeground());
 		g2.setColor(getForeground());
 		g2.setStroke(new BasicStroke(4));
@@ -131,39 +187,6 @@ public class SignalView extends JButton {
 			}
 			g2.setStroke(new BasicStroke(1));
 			g2.drawOval(btnSize.width - (arcLength+1),0,arcLength-1,arcLength-1);
-		}
-	}
-
-	/**
-	 * Will decide if the given x and y - values are within our button
-	 * @param	x	the x value
-	 * @param	y	the y value
-	 */
-	public boolean contains(int x, int y) {
-		if (shape == null || !shape.getBounds().equals(getBounds())) {
-			if (signal instanceof Input)
-				shape = new Float(0,0,arcLength-1,arcLength-1);
-			else
-				shape = new Float(btnSize.width - (arcLength+1),0, arcLength-1, arcLength-1);
-		}
-		return shape.contains(x, y);
-	}
-
-	public Point getPosition(Component context) {
-		if (this.signal instanceof Output) {
-			return SwingUtilities.convertPoint(
-				this.getParent(),
-				this.getX() + (btnSize.width),
-				this.getY() + (arcLength) / 2,
-				context
-			);
-		} else {
-			return SwingUtilities.convertPoint(
-				this.getParent(),
-				this.getLocation().x,
-				this.getLocation().y + (SignalView.arcLength) / 2,
-				context
-			);
 		}
 	}
 }
