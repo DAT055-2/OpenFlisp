@@ -97,7 +97,6 @@ public class ComponentPanel extends JPanel {
 		
 		gate = new NotGate("Notgate");
 		gate.getInput("input");
-		gate.getInput("input2");
 		notGate = new GateView(gate);
 		
 		gate = new NandGate("NandGate");
