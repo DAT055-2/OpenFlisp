@@ -154,12 +154,15 @@ public class WirePanel extends JPanel {
 	private final Action wireDeletionHandler = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
-			for (List<WireView> wires : WirePanel.this.activeWires.values()) {
-				for (WireView wire: wires) {
+			for (Entry<SignalView, List<WireView>> entry : WirePanel.this.activeWires.entrySet()) {
+				Iterator<WireView> it = entry.getValue().iterator();
+				while (it.hasNext()) {
+					WireView wire = it.next();
 					if (wire.getEnd() != null && wire.isSelected()) {
 						try {
 							wire.getStart().signal.disconnect(wire.getEnd().signal);
-							WirePanel.this.removeWire(wire);
+							WirePanel.this.remove(wire);
+							it.remove();
 						} catch (IllegalArgumentException e) {
 							System.out.println("Can not disconnect!" + e.getMessage());
 						}
