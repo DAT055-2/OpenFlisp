@@ -16,7 +16,6 @@
  */
 package se.openflisp.gui.swing.components;
 
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,198 +23,85 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import se.openflisp.sls.Component;
-import se.openflisp.sls.Signal;
-import se.openflisp.sls.component.AndGate;
-import se.openflisp.sls.component.ConstantGate;
-import se.openflisp.sls.component.NandGate;
-import se.openflisp.sls.component.NorGate;
-import se.openflisp.sls.component.NotGate;
-import se.openflisp.sls.component.NxorGate;
-import se.openflisp.sls.component.OrGate;
-import se.openflisp.sls.component.XorGate;
-
 /**	
- * Component for showing all components and enabling drag and drop creation.
+ * Panel for displaying all gates that can be used in the SimulationBoard.
  * 
- * @author oskar selberg <oskar.selberg@gmail.com>
+ * @author Oskar Selberg <oskar.selberg@gmail.com>
  * @version 1.0
  */
 @SuppressWarnings("serial")
 public class ComponentPanel extends JPanel {
-	//Layout for the panel
-	private GridBagLayout layout;
-	
-	//Constraints for the layout
-	private GridBagConstraints constraints;
-	
-	//All components to show
-	private ComponentView andGate;
-	private ComponentView notGate;
-	private ComponentView constantGateLOW;
-	private ComponentView constantGateHIGH;
-	private ComponentView nandGate;
-	private ComponentView orGate;
-	private ComponentView norGate;
-	private ComponentView xorGate;
-	private ComponentView nxorGate;
-	
-	//Component for gate initialization
-	private Component gate;
 	
 	/**
-	 * Creates the component panel, from which you can drag-out components to the SimulationBoard
+	 * Map over all known components to their identifier, needed in ComponentFactory to create a new
+	 * Component when dragged into SimulationBoard.
+	 */
+	private Map<ComponentView, String> componentIdentifiers = new HashMap<ComponentView, String>();
+	
+	/**
+	 * How many components in each column (y-axis).
+	 */
+	public static final int COLUMN_SIZE = 4;
+	
+	/**
+	 * Creates a new ComponentPanel and fills it with all known components
 	 */
 	public ComponentPanel() {
-		//Initiate variables
-		constraints = new GridBagConstraints();
-        layout = new GridBagLayout();
+        GridBagLayout layout = new GridBagLayout();
+        this.setLayout(layout);
         
-        //set default constraints
-        constraints.weighty = 1.0;	//add space between the components
-        
-        //add the constraints to the layout
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.weighty = 1.0;
 		layout.setConstraints(this, constraints);
 		
-		//add the layout to this component
-		this.setLayout(layout);
+		String[] gates = {
+			"AndGate", "NotGate", "ConstantOneGate", "ConstantZeroGate", "NandGate", 
+			"OrGate", "XorGate", "NorGate", "NxorGate"
+		};
+		int x = 0, y = 0;
+		for (String gateIdentifier : gates) {
+			GateView gate = ComponentFactory.createGateFromIdentifier(gateIdentifier);
+			this.componentIdentifiers.put(gate, gateIdentifier);
+			gate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
+			constraints.gridx = x;
+			constraints.gridy = y++;
+			this.add(gate, constraints);
+			if (y >= COLUMN_SIZE) {
+				x++;
+				y = 0;
+			}
+		}
 		
-		//Initiate the ComponentViews
-		gate = new ConstantGate("ConstantOneGate", Signal.State.LOW);
-		constantGateLOW = new GateView(gate);
-		
-		gate = new ConstantGate("ConstantZeroGate", Signal.State.HIGH);
-		constantGateHIGH = new GateView(gate);
-		
-		gate = new AndGate("Andgate");
-		gate.getInput("input");
-		gate.getInput("input2");
-		andGate = new GateView(gate);
-		
-		gate = new NotGate("Notgate");
-		gate.getInput("input");
-		notGate = new GateView(gate);
-		
-		gate = new NandGate("NandGate");
-		gate.getInput("input");
-		gate.getInput("input2");
-		nandGate = new GateView(gate);
-		
-		gate = new OrGate("OrGate");
-		gate.getInput("input");
-		gate.getInput("input2");
-		orGate = new GateView(gate);
-		
-		gate = new NorGate("NorGate");
-		gate.getInput("input");
-		gate.getInput("input2");
-		norGate = new GateView(gate);	
-		
-		gate = new XorGate("XorGate");
-		gate.getInput("input");
-		gate.getInput("input2");
-		xorGate = new GateView(gate);
-		
-		gate = new NxorGate("NxorGate");
-		gate.getInput("input");
-		gate.getInput("input2");
-		nxorGate = new GateView(gate);
-		
-		//set the size of the components
-		andGate.setMaximumSize(new Dimension(ComponentView.componentSize,2));
-		notGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
-		constantGateLOW.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
-		constantGateHIGH.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
-		nandGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
-		orGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));
-		norGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));	
-		xorGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));	
-		nxorGate.setMaximumSize(new Dimension(ComponentView.componentSize,ComponentView.componentSize/2));	
-
-		
-		//Add the ConstantGate (Signal.State.HIGH) to CompontPanel
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		this.add( constantGateHIGH, constraints );
-		
-		//Add the ConstantGate (Signal.State.LOW) to CompontPanel
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-		this.add( constantGateLOW, constraints );
-		
-		//Add the NotGate to CompontPanel
-		constraints.gridx = 0;
-		constraints.gridy = 2;
-		this.add( notGate, constraints );
-		
-		//Add the AndGate to CompontPanel
-		constraints.gridx = 0;
-		constraints.gridy = 3;
-		this.add( andGate, constraints );
+		DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(
+			this, 
+			DnDConstants.ACTION_COPY_OR_MOVE, 
+			this.dragHandler
+		);
+	}
 	
-		//Add the OrGate to CompontPanel
-		constraints.gridx = 0;
-		constraints.gridy = 4;
-		this.add( orGate, constraints );
-
-		//Add the NandGate to CompontPanel
-		constraints.gridx = 1;
-		constraints.gridy = 0;
-		this.add( nandGate, constraints );		
+	/**
+	 * Listens for attempts to initiate drag and drop. If drag and drop happens a new ComponentView is created
+	 * and the drag is started. 
+	 */
+	private final DragGestureListener dragHandler = new DragGestureListener() {
 		
-		//Add the NorGate to CompontPanel
-		constraints.gridx = 1;
-		constraints.gridy = 1;
-		this.add( norGate, constraints );	
-
-		//Add the XorGate to CompontPanel
-		constraints.gridx = 1;
-		constraints.gridy = 2;
-		this.add(xorGate, constraints );	
-		
-		//Add the NxorGate to CompontPanel
-		constraints.gridx = 1;
-		constraints.gridy = 3;
-		this.add(nxorGate, constraints );	
-		
-	
-		/**
-		 * Enable drag and drop listener, by sending a string to the receiver
-		 */
-		this.notGate.ds.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, new DragGestureListener() {
-			
-			@SuppressWarnings("static-access")
-			@Override
-			public void dragGestureRecognized(DragGestureEvent event) {
-				try {
-					GateView view = (GateView)getComponentAt(event.getDragOrigin());
-					if (view.getComponent() instanceof AndGate)
-						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("AndGate"));
-					else if (view.getComponent() instanceof NotGate)
-						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("NotGate"));
-					else if (view.getComponent() instanceof ConstantGate) {
-						if ( ((ConstantGate) view.getComponent()).getConstantState() == Signal.State.HIGH)
-							event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("ConstantOneGate"));
-						else
-							event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("ConstantZeroGate"));	
-					} 
-					else if (view.getComponent() instanceof NandGate)
-						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("NandGate"));
-					else if (view.getComponent() instanceof OrGate)
-						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("OrGate"));
-					else if (view.getComponent() instanceof NorGate)
-						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("NorGate"));
-					else if (view.getComponent() instanceof XorGate)
-						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("XorGate"));
-					else if (view.getComponent() instanceof NxorGate)
-						event.startDrag(ComponentPanel.this.notGate.ds.DefaultMoveDrop, new StringSelection("NxorGate"));
-				} catch(Exception e) {
-					e.printStackTrace();	
+		@Override
+		public void dragGestureRecognized(DragGestureEvent dge) {
+			JComponent component = (JComponent) ComponentPanel.this.getComponentAt(dge.getDragOrigin());
+			if (component instanceof GateView) {
+				String gateIdentifier = ComponentPanel.this.componentIdentifiers.get(component);
+				if (gateIdentifier != null) {
+					DragSource.getDefaultDragSource();
+					dge.startDrag(DragSource.DefaultMoveDrop, new StringSelection(gateIdentifier));
 				}
 			}
-		});
-	}
+		}
+	};
 }

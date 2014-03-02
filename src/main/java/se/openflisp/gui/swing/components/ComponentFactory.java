@@ -29,93 +29,77 @@ import se.openflisp.sls.component.XorGate;
 import se.openflisp.sls.Signal;
 
 /**	
- * A Factory for creating ComponentViews 
+ * Factory for creating new ComponentViews from Components or Component identifiers.
  * 
  * @author Daniel Svensson <daniel@dsit.se>
  * @version 1.0
  */
-
-
 public class ComponentFactory {
-	private static int gateNum;
-	private static int inputNum;
 	
 	/**
-	 * Creates a componentView given an Identifier
-	 * @param identifier		the identifier
-	 * @return	componentView	the view for this component
+	 * Internal counter of how many gates that have been created. Used to give "unique" identifiers
+	 * for all created Gates.
+	 */
+	private static int gateCount;
+	
+	/**
+	 * Creates a new Gate initiates a minimum number of inputs and returns a new GateView
+	 * for the wanted gate.
+	 * 
+	 * @param identifier	the identifier for the gate
+	 * @return	a new GateView corresponding to the identifier
 	 */
 	public static GateView createGateFromIdentifier(String identifier) {
-		try {
-			if(identifier.equals("AndGate")) {
-				AndGate andGate = new AndGate("AndGate" + Integer.toString(gateNum++));
-				andGate.getInput("input" + Integer.toString(inputNum++));
-				andGate.getInput("input" + Integer.toString(inputNum++));
-				return new GateView(andGate);
-			}
-			else if(identifier.equals("NotGate")) { 
-				NotGate notGate = new NotGate("NotGate" + Integer.toString(gateNum++));
-				notGate.getInput("input" + Integer.toString(inputNum++));
-				return new GateView(notGate);
-			}
-			else if(identifier.equals("ConstantOneGate")) { 
-				ConstantGate constantGate = new ConstantGate("ConstantOneGate" + Integer.toString(gateNum++), Signal.State.HIGH);
-				return new GateView(constantGate);
-			}
-			else if(identifier.equals("ConstantZeroGate")) { 
-				ConstantGate constantGate = new ConstantGate("ConstantZeroGate" + Integer.toString(gateNum++), Signal.State.LOW);
-				return new GateView(constantGate);
-			}
-			else if(identifier.equals("NandGate")) { 
-				NandGate nandGate = new NandGate("NandGate" + Integer.toString(gateNum++));
-				nandGate.getInput("input" + Integer.toString(inputNum++));
-				nandGate.getInput("input" + Integer.toString(inputNum++));
-				return new GateView(nandGate);
-			}
-			else if(identifier.equals("OrGate")) { 
-				OrGate orGate = new OrGate("OrGate" + Integer.toString(gateNum++));
-				orGate.getInput("input" + Integer.toString(inputNum++));
-				orGate.getInput("input" + Integer.toString(inputNum++));
-				return new GateView(orGate);
-			}
-			else if(identifier.equals("XorGate")) { 
-				XorGate xorGate = new XorGate("XorGate" + Integer.toString(gateNum++));
-				xorGate.getInput("input" + Integer.toString(inputNum++));
-				xorGate.getInput("input" + Integer.toString(inputNum++));
-				return new GateView(xorGate);
-			}
-			else if(identifier.equals("NorGate")) { 
-				NorGate norGate = new NorGate("NorGate" + Integer.toString(gateNum++));
-				norGate.getInput("input" + Integer.toString(inputNum++));
-				norGate.getInput("input" + Integer.toString(inputNum++));
-				return new GateView(norGate);
-			}
-			else if(identifier.equals("NxorGate")) { 
-				NxorGate nxorGate = new NxorGate("NxorGate" + Integer.toString(gateNum++));
-				nxorGate.getInput("input" + Integer.toString(inputNum++));
-				nxorGate.getInput("input" + Integer.toString(inputNum++));
-				return new GateView(nxorGate);
-			}
-		} catch (Exception e) {
-			System.out.println("Something went wrong when creating a ComponentView");
+		if (identifier.equals("AndGate")) {
+			AndGate andGate = new AndGate(Integer.toString(gateCount++));
+			andGate.initiateInputs(2);
+			return new GateView(andGate);
+		} else if(identifier.equals("NotGate")) { 
+			NotGate notGate = new NotGate(Integer.toString(gateCount++));
+			notGate.initiateInputs(1);
+			return new GateView(notGate);
+		} else if(identifier.equals("ConstantOneGate")) { 
+			ConstantGate constantGate = new ConstantGate(Integer.toString(gateCount++), Signal.State.HIGH);
+			return new GateView(constantGate);
+		} else if(identifier.equals("ConstantZeroGate")) { 
+			ConstantGate constantGate = new ConstantGate(Integer.toString(gateCount++), Signal.State.LOW);
+			return new GateView(constantGate);
+		} else if(identifier.equals("NandGate")) { 
+			NandGate nandGate = new NandGate(Integer.toString(gateCount++));
+			nandGate.initiateInputs(2);
+			return new GateView(nandGate);
+		} else if(identifier.equals("OrGate")) { 
+			OrGate orGate = new OrGate(Integer.toString(gateCount++));
+			orGate.initiateInputs(2);
+			return new GateView(orGate);
+		} else if(identifier.equals("XorGate")) { 
+			XorGate xorGate = new XorGate(Integer.toString(gateCount++));
+			xorGate.initiateInputs(2);
+			return new GateView(xorGate);
+		} else if(identifier.equals("NorGate")) { 
+			NorGate norGate = new NorGate(Integer.toString(gateCount++));
+			norGate.initiateInputs(2);
+			return new GateView(norGate);
+		} else if(identifier.equals("NxorGate")) { 
+			NxorGate nxorGate = new NxorGate(Integer.toString(gateCount++));
+			nxorGate.initiateInputs(2);
+			return new GateView(nxorGate);
+		} else {
 			return null;
 		}
-		return null;
 	}
 	
 	/**
-	 * Creates a componentView given a component
-	 * @param component		the component
-	 * @return	componentView	the view for this component
+	 * Creates a new GateView from an already existing Component.
+	 * 
+	 * @param component		component to generate GateView from
+	 * @return	a new GateView corresponding to the Component
 	 */
 	public static GateView createGateFromComponent(Component component) {
-		try {
-			if(component instanceof Gate) 
-				return new GateView(component);
-		} catch (Exception e) {
-			System.out.println("Something went wrong when creating a ComponentView");
+		if (component instanceof Gate)  {
+			return new GateView(component);
+		} else {
 			return null;
 		}
-		return null;
 	}
 }
