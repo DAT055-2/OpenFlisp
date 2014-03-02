@@ -144,7 +144,11 @@ public class WireView extends JButton {
 	private final MouseAdapter wireSelectionHandler = new MouseAdapter() {
 		@Override
 		public void mousePressed(MouseEvent evt) {
-			WireView.this.selected = true;
+			if (WireView.this.isSelected()) {
+				WireView.this.deselect();
+			} else {
+				WireView.this.select();
+			}
 		}
 	};
 }

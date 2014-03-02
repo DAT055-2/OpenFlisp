@@ -353,8 +353,13 @@ public class SimulationBoard extends JPanel {
 				System.out.println("Component pressed: " + evt);
 				
 				this.draggedComponent = (ComponentView) evt.getComponent();
-				this.draggedComponent.select();
 				this.point = evt.getPoint();
+				
+				if (this.draggedComponent.isSelected()) {
+					this.draggedComponent.deselect();
+				} else {
+					this.draggedComponent.select();
+				}
 			}
 		}
 		
