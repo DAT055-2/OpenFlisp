@@ -199,6 +199,10 @@ public class SimulationBoard extends JPanel {
 		timer.start();
 	}
 	
+	public Circuit2D getCircuit() {
+		return this.circuit;
+	}
+	
 	/**
 	 * Adds a component to the simulation board
 	 * @param component		the component to be added

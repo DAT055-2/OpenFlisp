@@ -59,11 +59,14 @@ public class SignalView extends JButton {
 
 	//We need this to determine if a x.y coordinate is whithin this button
 	private Shape shape;
+	
+	private ComponentView componentView;
 
 	public se.openflisp.sls.Component component;
 
-	public SignalView(Signal signal) {
+	public SignalView(ComponentView componentView, Signal signal) {
 		this.component = signal.getOwner();
+		this.componentView = componentView;
 		this.setPreferredSize(btnSize);
 		this.signal = signal;
 		this.setContentAreaFilled(false);
@@ -78,6 +81,10 @@ public class SignalView extends JButton {
 		});
 	}
 
+	public ComponentView getComponentView() {
+		return this.componentView;
+	}
+	
 	/**
 	 * Custom paint method so our button looks like a signal
 	 */

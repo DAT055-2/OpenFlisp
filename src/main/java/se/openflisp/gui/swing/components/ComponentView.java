@@ -71,4 +71,6 @@ public abstract class ComponentView extends JPanel {
 	
 	public abstract SignalView getSignalView(Signal signal);
 	
+	public abstract SignalView createSignalView(Signal signal);
+	
 }

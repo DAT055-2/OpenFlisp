@@ -126,7 +126,7 @@ public class GateView extends ComponentView {
 		
 		
 		for(Output output : component.getOutputs()) {
-			SignalView out = new SignalView(output);
+			SignalView out = new SignalView(this, output);
 			out.setMaximumSize(out.btnSize);
 			this.outputSignals.add(out);
 			this.outputPanel.add( Box.createVerticalGlue() );
@@ -135,7 +135,7 @@ public class GateView extends ComponentView {
 		}
 		
 		for(Input input : component.getInputs()) {
-			SignalView in = new SignalView(input);
+			SignalView in = new SignalView(this, input);
 			in.setMaximumSize(in.btnSize);
 			this.inputSignals.add(in);
 			this.inputPanel.add( Box.createVerticalGlue() );
@@ -179,5 +179,23 @@ public class GateView extends ComponentView {
 			}
 		}
 		return null;
+	}
+	
+	public SignalView createSignalView(Signal signal) {
+		SignalView view = new SignalView(this, signal);
+		view.setMaximumSize(SignalView.btnSize);
+		if (signal instanceof Output) {
+			this.outputSignals.add(view);
+			this.outputPanel.add(Box.createVerticalGlue());
+			this.outputPanel.add(view);
+			this.outputPanel.add(Box.createVerticalGlue());
+		} else {
+			this.inputSignals.add(view);
+			this.inputPanel.add(Box.createVerticalGlue());
+			this.inputPanel.add(view);
+			this.inputPanel.add(Box.createVerticalGlue());
+		}
+		this.revalidate();
+		return view;
 	}
 }

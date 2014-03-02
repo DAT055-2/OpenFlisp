@@ -2,6 +2,7 @@ package se.openflisp.gui.swing.components;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -16,10 +17,13 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import se.openflisp.gui.util.KeyEventDelegator;
+import se.openflisp.sls.Component;
 import se.openflisp.sls.Input;
 import se.openflisp.sls.Output;
+import se.openflisp.sls.component.NotGate;
 
 @SuppressWarnings("serial")
 public class WirePanel extends JPanel {
@@ -208,6 +212,7 @@ public class WirePanel extends JPanel {
 			}
 			SignalView start = this.draggedWire.getStart();
 			SignalView end = this.lastSignalEntered;
+			
 			if (end == null || !(evt.getComponent() instanceof SignalView)) {
 				System.out.println("Didnt release on a Signal");
 				WirePanel.this.removeWire(this.draggedWire);
@@ -218,7 +223,19 @@ public class WirePanel extends JPanel {
 			System.out.println("Ending wire on? " + end.signal);
 			
 			try {
-				if (start.signal.connect(end.signal)) {
+				if (end.signal instanceof Input && end.signal.isConnected()) {
+					System.out.println("Signal is full!");
+					Component component = end.signal.getOwner();
+					if (!(component instanceof NotGate) && component.getInputs().size() < 4) {
+						Input newInput = component.getInput(Integer.toString(
+							component.getInputs().size() + 1
+						));
+						end = end.getComponentView().createSignalView(newInput);
+					}
+				}
+				
+				
+				if (end != null && start.signal.connect(end.signal)) {
 					this.draggedWire.attatchEnd(end);
 					
 					if (!WirePanel.this.activeWires.containsKey(end)) {
@@ -229,6 +246,17 @@ public class WirePanel extends JPanel {
 					}
 					WirePanel.this.activeWires.get(start).add(this.draggedWire);
 					WirePanel.this.activeWires.get(end).add(this.draggedWire);
+					
+					final SignalView endFinal = end;
+					
+					Timer timer = new Timer(200, new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							WirePanel.this.handleComponentMoved(endFinal.getComponentView());
+						}
+					});
+					timer.setRepeats(false);
+					timer.start();
 				} else {
 					WirePanel.this.removeWire(this.draggedWire);
 				}
