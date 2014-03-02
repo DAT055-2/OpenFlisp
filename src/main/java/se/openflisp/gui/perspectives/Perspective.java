@@ -22,47 +22,65 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 
 /**	
- * Model class for a perspective
+ * Base class for all perspective.
  * 
  * @author Daniel Svensson <daniel@dsit.se>
  * @version 1.0
  */
 public abstract class Perspective {
-	protected DockController controller;
-	protected SplitDockStation station;
-	protected SplitDockGrid	dockGrid;
-	protected DockTheme	theme;
-	protected String	identifier;
 	
 	/**
-	 * Create a new perspective given a theme, also creates a DockController
-	 * and a DockStation
-	 * @param theme		theme to use for this perspective
+	 * The perspective dock controller.
+	 */
+	protected DockController controller;
+	
+	/**
+	 * The perspective dock station.
+	 */
+	protected SplitDockStation station;
+	
+	/**
+	 * The perspective dock grid.
+	 */
+	protected SplitDockGrid	dockGrid;
+	
+	/**
+	 * The perspective theme.
+	 */
+	protected DockTheme	theme;
+	
+	/**
+	 * Identifier for this perspective used to swap between Perspectives.
+	 */
+	protected String identifier;
+	
+	/**
+	 * Create a new Assembler Perspective.
+	 * 
+	 * @param theme		theme for the perspective
 	 */
 	public Perspective(DockTheme theme) {
 		this.theme = theme;
-		
-		// Create Perspective
-		controller = new DockController();
-		controller.setTheme(theme);
-
-		station = new SplitDockStation();
-		controller.add(station);
-		
-		dockGrid = new SplitDockGrid();
+		this.controller = new DockController();
+		this.controller.setTheme(theme);
+		this.station = new SplitDockStation();
+		this.controller.add(station);
+		this.dockGrid = new SplitDockGrid();
 	}
 	
 	/**
-	 * Gets the perspective identifier
-	 * @return	the indentifier for this perspective
+	 * Gets the perspective identifier.
+	 * 
+	 * @return the perspective identifier.
 	 */
 	public String getIdentifier() {
 		return this.identifier;
 	}
 	
 	/**
-	 * Gets the Dockstation for this perspective
-	 * @return the dockstation for this perspective
+	 * Gets the SplitDockStation for this Perspective.
+	 * 
+	 * @return the SplitDockStation for this Perspective
 	 */
 	public SplitDockStation getStation() {
 		return this.station;

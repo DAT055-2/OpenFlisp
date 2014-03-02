@@ -20,23 +20,26 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.DefaultDockable;
 
 /**	
- * Create Assembler perspective
+ * Perspective for assembler editors.
  * 
  * @author Daniel Svensson <daniel@dsit.se>
  * @version 1.0
  */
 public class AsmPerspective extends Perspective {
+	
 	/**
-	 * Creates the assembler perspective
-	 * @param theme		the theme to use with this perspective
+	 * Identifier for the assembler perspective.
+	 */
+	public static final String IDENTIFIER = "Editor view";
+	
+	/**
+	 * Create a new Assembler Perspective.
+	 * 
+	 * @param theme		theme for the perspective
 	 */
 	public AsmPerspective (DockTheme theme) {
 		super(theme);
-
-		// Set identifier
-		this.identifier = "Editor view";
-		
-		//Set grid
+		this.identifier = AsmPerspective.IDENTIFIER;
 		dockGrid.addDockable(0, 0, 2, 1, new DefaultDockable("Komponenter"));
 		dockGrid.addDockable(0, 0, 1 ,1, new DefaultDockable("Kopplingsarea"));
 		station.dropTree( dockGrid.toTree());

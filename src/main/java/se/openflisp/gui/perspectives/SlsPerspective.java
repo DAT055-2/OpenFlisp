@@ -18,40 +18,46 @@ package se.openflisp.gui.perspectives;
 
 import se.openflisp.gui.swing.components.ComponentPanel;
 import se.openflisp.gui.swing.components.SimulationBoard;
-import se.openflisp.sls.simulation.Circuit2D;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.DefaultDockable;
 
 /**	
- * Create the sequential logic simulation perspective
+ * Perspective for sequential logic simulation.
  * 
  * @author Daniel Svensson <daniel@dsit.se>
  * @version 1.0
  */
 public class SlsPerspective extends Perspective {
 	
-	private SimulationBoard simulationBoard;
+	/**
+	 * The active simulation board for this perspective.
+	 */
+	private final SimulationBoard simulationBoard;
 	
+	/**
+	 * Identifier for the sequential logic simulation perspective.
+	 */
 	public static final String IDENTIFIER = "Sequential Logical simulation";
 	
 	/**
-	 * Creates the Sequential logic simulation perspective
-	 * @param theme		the theme to use with this perspective
+	 * Create a new Sequential Logical Simulation perspective.
+	 * 
+	 * @param theme		theme for the perspective
 	 */
 	public SlsPerspective (DockTheme theme) {
 		super(theme);
-		
-		// Set identifier
 		this.identifier = IDENTIFIER;
-		
 		this.simulationBoard = new SimulationBoard();
-		
-		//Set grid
 		dockGrid.addDockable(0, 0, 2, 1, new DefaultDockable(this.simulationBoard));
 		dockGrid.addDockable(0, 0, 1 ,1, new DefaultDockable(new ComponentPanel()));
 		station.dropTree( dockGrid.toTree());
 	}
 	
+	/**
+	 * Gets the active simulation board for this perspective.
+	 * 
+	 * @return the active simulation board for this perspective
+	 */
 	public SimulationBoard getSimulationBoard() {
 		return this.simulationBoard;
 	}
