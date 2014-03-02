@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2014- See AUTHORS file.
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package se.openflisp.gui.swing.components;
 
 import java.awt.Point;
@@ -29,13 +45,29 @@ import se.openflisp.sls.Input;
 import se.openflisp.sls.Output;
 import se.openflisp.sls.component.NotGate;
 
+/**
+ * 
+ * @author Anton Ekberg <anton.ekberg@gmail.com>
+ * @version 1.0
+ */
 @SuppressWarnings("serial")
 public class WirePanel extends JPanel {
 
+	/**
+	 * 
+	 */
 	private final SimulationBoard simulationBoard;
 	
+	/**
+	 * 
+	 */
 	private Map<SignalView, List<WireView>> activeWires = new HashMap<SignalView, List<WireView>>();
 	
+	/**
+	 * Creates a new WirePanel.
+	 * 
+	 * @param simulationBoard	the SimulationBoard containing the Components that wires should be drawn between
+	 */
 	public WirePanel(SimulationBoard simulationBoard) {
 		this.simulationBoard = simulationBoard;
 		KeyEventDelegator.addKeyAction(
@@ -45,6 +77,11 @@ public class WirePanel extends JPanel {
 		);
 	}
 	
+	/**
+	 * Adds a wire to the panel.
+	 * 
+	 * @param wire		wire to add
+	 */
 	protected void addWire(WireView wire) {
 		wire.setBounds(0, 0, 1000, 1000);
 		this.add(wire);
@@ -52,6 +89,11 @@ public class WirePanel extends JPanel {
 		this.revalidate();
 	}
 	
+	/**
+	 * Removes a wire from the panel.
+	 * 
+	 * @param wire		wire to remove
+	 */
 	protected void removeWire(WireView wire) {
 		if (this.activeWires.containsKey(wire.getStart())) {
 			this.activeWires.get(wire.getStart()).remove(wire);
@@ -64,6 +106,23 @@ public class WirePanel extends JPanel {
 		this.revalidate();
 	}
 	
+	/**
+	 * Deselects all wires in the WirePanel.
+	 */
+	public void deselectAllWires() {
+		for (List<WireView> wires : WirePanel.this.activeWires.values()) {
+			for (WireView wire: wires) {
+				wire.deselect();
+			}
+		}
+	}
+	
+	/**
+	 * Adds listeners to all ComponentViews and generates wires between connections
+	 * that already exists.
+	 * 
+	 * @param component		ComponentView to add
+	 */
 	public void handleComponentAdded(ComponentView component) {
 		for (SignalView signal : component.getInputViews()) {
 			if (signal.signal.isConnected()) {
@@ -95,6 +154,11 @@ public class WirePanel extends JPanel {
 		this.handleComponentMoved(component);
 	}
 	
+	/**
+	 * Removes all wires that is connected to a certain ComponentView.
+	 * 
+	 * @param component		ComponentView that has been removed
+	 */
 	public void handleComponentRemoved(ComponentView component) {
 		Set<WireView> wires = new HashSet<WireView>();
 		for (SignalView signal : component.getInputViews()) {
@@ -126,6 +190,11 @@ public class WirePanel extends JPanel {
 		this.revalidate();
 	}
 	
+	/**
+	 * Moves all the wires then a ComponentView has been moved.
+	 * 
+	 * @param component		ComponentView that has been moved
+	 */
 	public void handleComponentMoved(ComponentView component) {
 		for (SignalView signal : component.getInputViews()) {
 			if (this.activeWires.containsKey(signal)) {
@@ -143,14 +212,9 @@ public class WirePanel extends JPanel {
 		}
 	}
 	
-	public void deselectAllWires() {
-		for (List<WireView> wires : WirePanel.this.activeWires.values()) {
-			for (WireView wire: wires) {
-				wire.deselect();
-			}
-		}
-	}
-	
+	/**
+	 * Handler for removing wires that have been selected
+	 */
 	private final Action wireDeletionHandler = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
@@ -172,6 +236,9 @@ public class WirePanel extends JPanel {
 		}
 	};
 	
+	/**
+	 * Handler for handling creation of new Wires when dragging and dropping wires on SignalViews.
+	 */
 	private final MouseAdapter wireCreationHandler = new MouseAdapter() {
 		private WireView draggedWire;
 		private SignalView lastSignalEntered;
