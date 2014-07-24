@@ -28,9 +28,9 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import se.openflisp.gui.perspectives.AsmPerspective;
+import se.openflisp.gui.perspectives.GateSimPerspective;
 import se.openflisp.gui.perspectives.Perspective;
 import se.openflisp.gui.perspectives.SlsPerspective;
-
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 	
 /**	
@@ -56,6 +56,7 @@ public class OpenFlispPerspectives extends JPanel implements ItemListener {
     	perspectives = new ArrayList<Perspective>();
     	
     	//Initialize all the perspectives
+    	perspectives.add(new GateSimPerspective(new EclipseTheme()));
     	perspectives.add(new SlsPerspective(new EclipseTheme()));
     	perspectives.add(new AsmPerspective(new EclipseTheme()));
     }
